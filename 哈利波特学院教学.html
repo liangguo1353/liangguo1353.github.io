@@ -1,0 +1,1267 @@
+html
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍格沃茨魔法学院 - 数学与科学课程 | Hogwarts School - Math & Science Curriculum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Kai', serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #f0e6d2;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #8b0000, #4a0e0e);
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+            border: 3px solid #d4af37;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #d4af37;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #f0e6d2;
+            font-style: italic;
+        }
+
+        /* Points Display */
+        .points-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 20px;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+            border: 3px solid #d4af37;
+            z-index: 1000;
+        }
+
+        .points-display .points {
+            font-size: 2em;
+            font-weight: bold;
+            color: #8b0000;
+        }
+
+        .points-display .label {
+            font-size: 0.7em;
+            color: #4a0e0e;
+        }
+
+        /* Badges */
+        .badges-container {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 2px solid #d4af37;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+
+        .badge.unlocked {
+            opacity: 1;
+            animation: glow 2s infinite;
+        }
+
+        .badge-math {
+            background: linear-gradient(135deg, #4169e1, #1e90ff);
+            border: 2px solid #1e90ff;
+        }
+
+        .badge-science {
+            background: linear-gradient(135deg, #228b22, #32cd32);
+            border: 2px solid #32cd32;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            background: linear-gradient(135deg, #4a0e0e, #8b0000);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #8b0000, #4a0e0e);
+            border-color: #ffd700;
+        }
+
+        /* Lesson Cards */
+        .lesson-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #d4af37;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .lesson-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lesson-section {
+            margin-bottom: 30px;
+        }
+
+        .lesson-section h2 {
+            color: #d4af37;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .lesson-section h3 {
+            color: #ffd700;
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+        }
+
+        /* Character Box */
+        .character-box {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            border-left: 5px solid #d4af37;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            font-style: italic;
+        }
+
+        .character-name {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Spell/Formula Box */
+        .spell-box {
+            background: linear-gradient(135deg, #4a0e0e, #1a1a2e);
+            border: 3px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .spell-name {
+            color: #ffd700;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .spell-description {
+            color: #f0e6d2;
+            font-size: 1.1em;
+        }
+
+        /* Task Box */
+        .task-box {
+            background: rgba(70, 130, 180, 0.2);
+            border: 2px solid #4682b4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .task-title {
+            color: #4682b4;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            background: rgba(139, 0, 0, 0.2);
+            border: 2px solid #8b0000;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .quiz-question {
+            margin-bottom: 20px;
+        }
+
+        .quiz-question p {
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .quiz-options {
+            margin-left: 20px;
+        }
+
+        .quiz-options label {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .quiz-options label:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quiz-options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Audio Icon */
+        .audio-icon {
+            cursor: pointer;
+            display: inline-block;
+            margin-left: 10px;
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+
+        .audio-icon:hover {
+            color: #ffed4e;
+        }
+
+        /* Bilingual Text */
+        .bilingual {
+            margin: 10px 0;
+        }
+
+        .zh {
+            color: #f0e6d2;
+            font-size: 1.1em;
+        }
+
+        .en {
+            color: #b8b8b8;
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        /* Result Box */
+        .result-box {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+
+        .result-box.success {
+            background: linear-gradient(135deg, #228b22, #32cd32);
+            border: 2px solid #32cd32;
+        }
+
+        .result-box.partial {
+            background: linear-gradient(135deg, #ff8c00, #ffa500);
+            border: 2px solid #ffa500;
+        }
+
+        .result-box.fail {
+            background: linear-gradient(135deg, #8b0000, #dc143c);
+            border: 2px solid #dc143c;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #4a0e0e, #2c3e50);
+            border: 3px solid #d4af37;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .points-display {
+                width: 80px;
+                height: 80px;
+                top: 10px;
+                right: 10px;
+            }
+
+            .points-display .points {
+                font-size: 1.5em;
+            }
+
+            .nav-tab {
+                min-width: 100%;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.5em;
+            color: #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏰 霍格沃茨魔法学院 🏰</h1>
+            <h1>Hogwarts School of Witchcraft and Wizardry</h1>
+            <p>数学与科学魔法课程 | Mathematics & Science Magical Curriculum</p>
+            <p>安大略省四五年级 | Ontario Grades 4-5</p>
+        </header>
+
+        <!-- Points Display -->
+        <div class="points-display">
+            <div class="points" id="totalPoints">0</div>
+            <div class="label">魔法积分<br>Points</div>
+        </div>
+
+        <!-- Badges -->
+        <div class="badges-container">
+            <h2 style="color: #d4af37; margin-bottom: 15px;">🏆 魔法勋章 | Magical Badges 🏆</h2>
+            <div class="badge badge-math" id="badge-math">📐 数理优等生 | Math Scholar (需要500分 | 500 pts)</div>
+            <div class="badge badge-science" id="badge-science">🔬 科学小巫师 | Science Wizard (需要500分 | 500 pts)</div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showLesson('math4-1')">四年级数学1<br>Grade 4 Math 1</div>
+            <div class="nav-tab" onclick="showLesson('math4-2')">四年级数学2<br>Grade 4 Math 2</div>
+            <div class="nav-tab" onclick="showLesson('math5-1')">五年级数学1<br>Grade 5 Math 1</div>
+            <div class="nav-tab" onclick="showLesson('math5-2')">五年级数学2<br>Grade 5 Math 2</div>
+            <div class="nav-tab" onclick="showLesson('science4-1')">四年级科学1<br>Grade 4 Science 1</div>
+            <div class="nav-tab" onclick="showLesson('science4-2')">四年级科学2<br>Grade 4 Science 2</div>
+            <div class="nav-tab" onclick="showLesson('science5-1')">五年级科学1<br>Grade 5 Science 1</div>
+            <div class="nav-tab" onclick="showLesson('science5-2')">五年级科学2<br>Grade 5 Science 2</div>
+        </div>
+
+        <!-- Lesson: Grade 4 Math 1 - Integer Operations -->
+        <div class="lesson-card active" id="lesson-math4-1">
+            <div class="lesson-section">
+                <h2>🔮 第一课：整数运算魔法 | Lesson 1: Integer Operations Magic</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">赫敏·格兰杰 | Hermione Granger</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('欢迎来到霍格沃茨的数字魔法课堂！今天我们将学习整数的加减乘除，就像施展魔法咒语一样精确！', 'zh-CN')">🔊</span> "欢迎来到霍格沃茨的数字魔法课堂！今天我们将学习整数的加减乘除，就像施展魔法咒语一样精确！"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Welcome to Hogwarts number magic classroom! Today we will learn addition, subtraction, multiplication, and division of integers, as precise as casting spells!', 'en-US')">🔊</span> "Welcome to Hogwarts' number magic classroom! Today we'll learn addition, subtraction, multiplication, and division of integers, as precise as casting spells!"</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">你走进霍格沃茨的数学教室，墙上的魔法黑板上浮现着闪烁的数字。邓布利多校长微笑着说："数字是魔法世界的基础，掌握它们，你就能解开许多谜题！"</p>
+                    <p class="en">You enter the Hogwarts mathematics classroom, where glowing numbers appear on the magical blackboard. Headmaster Dumbledore smiles and says, "Numbers are the foundation of the magical world. Master them, and you'll unlock many mysteries!"</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语一：加法咒 | Spell One: Addition Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('加数加加数等于和', 'zh-CN')">🔊</span> 加数 + 加数 = 和</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Addend plus addend equals sum', 'en-US')">🔊</span> Addend + Addend = Sum</p>
+                        <p class="zh">例如：魔杖商店有 245 根魔杖，又进货 178 根，现在有多少根？</p>
+                        <p class="en">Example: The wand shop has 245 wands and receives 178 more. How many wands are there now?</p>
+                        <p class="zh">245 + 178 = 423 根魔杖</p>
+                        <p class="en">245 + 178 = 423 wands</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语二：减法咒 | Spell Two: Subtraction Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('被减数减减数等于差', 'zh-CN')">🔊</span> 被减数 - 减数 = 差</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Minuend minus subtrahend equals difference', 'en-US')">🔊</span> Minuend - Subtrahend = Difference</p>
+                        <p class="zh">例如：格兰芬多有 500 分，扣除 85 分，还剩多少？</p>
+                        <p class="en">Example: Gryffindor has 500 points and loses 85 points. How many remain?</p>
+                        <p class="zh">500 - 85 = 415 分</p>
+                        <p class="en">500 - 85 = 415 points</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语三：乘法咒 | Spell Three: Multiplication Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('因数乘因数等于积', 'zh-CN')">🔊</span> 因数 × 因数 = 积</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Factor times factor equals product', 'en-US')">🔊</span> Factor × Factor = Product</p>
+                        <p class="zh">例如：每个魔法药水需要 12 个材料，做 15 瓶需要多少材料？</p>
+                        <p class="en">Example: Each potion requires 12 ingredients. How many ingredients for 15 potions?</p>
+                        <p class="zh">12 × 15 = 180 个材料</p>
+                        <p class="en">12 × 15 = 180 ingredients</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语四：除法咒 | Spell Four: Division Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('被除数除以除数等于商', 'zh-CN')">🔊</span> 被除数 ÷ 除数 = 商</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Dividend divided by divisor equals quotient', 'en-US')">🔊</span> Dividend ÷ Divisor = Quotient</p>
+                        <p class="zh">例如：有 144 块巧克力蛙，平均分给 12 个学生，每人得多少？</p>
+                        <p class="en">Example: 144 chocolate frogs shared equally among 12 students. How many each?</p>
+                        <p class="zh">144 ÷ 12 = 12 块</p>
+                        <p class="en">144 ÷ 12 = 12 each</p>
+                    </div>
+                </div>
+
+                <h3>🎯 实操任务 | Practical Task</h3>
+                <div class="task-box">
+                    <div class="task-title">任务：帮助海格计算魔法生物的食物 | Task: Help Hagrid Calculate Creature Food</div>
+                    <div class="bilingual">
+                        <p class="zh">海格养了 8 只鹰头马身有翼兽，每只每天需要 25 公斤食物。一周需要多少公斤食物？</p>
+                        <p class="en">Hagrid has 8 hippogriffs, each needs 25 kg of food daily. How much food for one week?</p>
+                        <p class="zh">提示：先算一天的总量，再乘以7天</p>
+                        <p class="en">Hint: Calculate daily total first, then multiply by 7 days</p>
+                        <p class="zh">答案：8 × 25 = 200 公斤/天；200 × 7 = 1,400 公斤/周</p>
+                        <p class="en">Answer: 8 × 25 = 200 kg/day; 200 × 7 = 1,400 kg/week</p>
+                    </div>
+                </div>
+
+                <h3>📝 魔法测验 | Magical Quiz</h3>
+                <div class="quiz-section">
+                    <form id="quiz-math4-1">
+                        <div class="quiz-question">
+                            <p>1. 霍格沃茨图书馆有 3,456 本魔法书，又购买了 2,789 本。现在共有多少本书？</p>
+                            <p>Hogwarts library has 3,456 magic books and purchases 2,789 more. How many books total?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="A"> A) 5,245</label>
+                                <label><input type="radio" name="q1" value="B"> B) 6,145</label>
+                                <label><input type="radio" name="q1" value="C"> C) 6,245</label>
+                                <label><input type="radio" name="q1" value="D"> D) 6,345</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. 魔法部有 8,000 名巫师，其中 3,567 名在伦敦工作。其他地方有多少名巫师？</p>
+                            <p>The Ministry has 8,000 wizards, 3,567 work in London. How many wizards elsewhere?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="A"> A) 4,333</label>
+                                <label><input type="radio" name="q2" value="B"> B) 4,433</label>
+                                <label><input type="radio" name="q2" value="C"> C) 4,533</label>
+                                <label><input type="radio" name="q2" value="D"> D) 5,433</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. 每个魔法班级有 24 名学生，霍格沃茨有 18 个班级。共有多少学生？</p>
+                            <p>Each class has 24 students. Hogwarts has 18 classes. How many students total?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="A"> A) 342</label>
+                                <label><input type="radio" name="q3" value="B"> B) 432</label>
+                                <label><input type="radio" name="q3" value="C"> C) 442</label>
+                                <label><input type="radio" name="q3" value="D"> D) 532</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>4. 有 336 个飞天扫帚，要平均分给 14 个队伍。每队得多少个？</p>
+                            <p>336 broomsticks shared equally among 14 teams. How many per team?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="A"> A) 22</label>
+                                <label><input type="radio" name="q4" value="B"> B) 24</label>
+                                <label><input type="radio" name="q4" value="C"> C) 26</label>
+                                <label><input type="radio" name="q4" value="D"> D) 28</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. 罗恩买了 45 个巧克力蛙，每个 12 加隆。他花了多少加隆？</p>
+                            <p>Ron bought 45 chocolate frogs at 12 Galleons each. How much did he spend?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="A"> A) 440</label>
+                                <label><input type="radio" name="q5" value="B"> B) 490</label>
+                                <label><input type="radio" name="q5" value="C"> C) 540</label>
+                                <label><input type="radio" name="q5" value="D"> D) 640</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" onclick="checkQuiz('math4-1', ['C','B','B','B','C'], 'math')">提交答案 | Submit Answers</button>
+                    </form>
+                    <div class="result-box" id="result-math4-1"></div>
+                </div>
+
+                <h3>📖 总结复盘 | Summary Review</h3>
+                <div class="summary-box">
+                    <div class="bilingual">
+                        <p class="zh"><strong>今天我们学习了：</strong></p>
+                        <p class="en"><strong>Today we learned:</strong></p>
+                        <ul>
+                            <li class="zh">✓ 整数加法运算（四位数以内）</li>
+                            <li class="en">✓ Integer addition (up to 4 digits)</li>
+                            <li class="zh">✓ 整数减法运算（四位数以内）</li>
+                            <li class="en">✓ Integer subtraction (up to 4 digits)</li>
+                            <li class="zh">✓ 整数乘法运算（两位数×两位数）</li>
+                            <li class="en">✓ Integer multiplication (2-digit × 2-digit)</li>
+                            <li class="zh">✓ 整数除法运算（三位数÷两位数）</li>
+                            <li class="en">✓ Integer division (3-digit ÷ 2-digit)</li>
+                        </ul>
+                        <p class="zh"><strong>🌟 魔法提示：</strong>计算时要像施法一样仔细，检查每一步！</p>
+                        <p class="en"><strong>🌟 Magical Tip:</strong> Calculate carefully like casting spells, check each step!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson: Grade 4 Math 2 - Metric Units & Perimeter -->
+        <div class="lesson-card" id="lesson-math4-2">
+            <div class="lesson-section">
+                <h2>🔮 第二课：度量魔法与周长咒语 | Lesson 2: Measurement Magic & Perimeter Spells</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">邓布利多教授 | Professor Dumbledore</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('在魔法世界中，精确的度量至关重要。无论是调配魔药还是绘制魔法阵，我们都需要掌握公制单位的换算。', 'zh-CN')">🔊</span> "在魔法世界中，精确的度量至关重要。无论是调配魔药还是绘制魔法阵，我们都需要掌握公制单位的换算。"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('In the magical world, precise measurement is crucial. Whether brewing potions or drawing magic circles, we must master metric conversions.', 'en-US')">🔊</span> "In the magical world, precise measurement is crucial. Whether brewing potions or drawing magic circles, we must master metric conversions."</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">你来到霍格沃茨的魔药课教室，斯内普教授正在黑板上写下各种单位换算。"记住，"他冷冷地说，"一个单位错误可能毁掉整锅魔药。"</p>
+                    <p class="en">You arrive at Hogwarts' Potions classroom. Professor Snape writes various unit conversions on the blackboard. "Remember," he says coldly, "one unit error could ruin an entire cauldron of potion."</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语一：长度换算咒 | Spell One: Length Conversion Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('1千米等于1000米，1米等于100厘米，1厘米等于10毫米', 'zh-CN')">🔊</span> 1 千米 = 1,000 米 | 1 km = 1,000 m</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('1 kilometer equals 1000 meters, 1 meter equals 100 centimeters, 1 centimeter equals 10 millimeters', 'en-US')">🔊</span></p>
+                        <p class="zh">1 米 = 100 厘米 | 1 m = 100 cm</p>
+                        <p class="zh">1 厘米 = 10 毫米 | 1 cm = 10 mm</p>
+                        <p class="zh">例如：魔杖长度 350 毫米 = 35 厘米 = 0.35 米</p>
+                        <p class="en">Example: Wand length 350 mm = 35 cm = 0.35 m</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语二：质量换算咒 | Spell Two: Mass Conversion Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('1千克等于1000克，1吨等于1000千克', 'zh-CN')">🔊</span> 1 千克 = 1,000 克 | 1 kg = 1,000 g</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('1 kilogram equals 1000 grams, 1 tonne equals 1000 kilograms', 'en-US')">🔊</span></p>
+                        <p class="zh">1 吨 = 1,000 千克 | 1 t = 1,000 kg</p>
+                        <p class="zh">例如：凤凰重量 2,500 克 = 2.5 千克</p>
+                        <p class="en">Example: Phoenix weight 2,500 g = 2.5 kg</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语三：容量换算咒 | Spell Three: Volume Conversion Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('1升等于1000毫升', 'zh-CN')">🔊</span> 1 升 = 1,000 毫升 | 1 L = 1,000 mL</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('1 liter equals 1000 milliliters', 'en-US')">🔊</span></p>
+                        <p class="zh">例如：魔药瓶容量 750 毫升 = 0.75 升</p>
+                        <p class="en">Example: Potion bottle capacity 750 mL = 0.75 L</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语四：周长计算咒 | Spell Four: Perimeter Calculation Charm</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('长方形周长等于长加宽乘以二，正方形周长等于边长乘以四', 'zh-CN')">🔊</span> 长方形周长 = (长 + 宽) × 2</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Rectangle perimeter equals length plus width times two, square perimeter equals side times four', 'en-US')">🔊</span> Rectangle Perimeter = (Length + Width) × 2</p>
+                        <p class="zh">正方形周长 = 边长 × 4</p>
+                        <p class="en">Square Perimeter = Side × 4</p>
+                        <p class="zh">例如：魔法阵是正方形，边长 12 米，周长 = 12 × 4 = 48 米</p>
+                        <p class="en">Example: Magic circle is a square, side 12 m, perimeter = 12 × 4 = 48 m</p>
+                    </div>
+                </div>
+
+                <h3>🎯 实操任务 | Practical Task</h3>
+                <div class="task-box">
+                    <div class="task-title">任务：帮助麦格教授测量魔法教室 | Task: Help Professor McGonagall Measure the Classroom</div>
+                    <div class="bilingual">
+                        <p class="zh">魔法教室是长方形，长 15 米，宽 8 米。需要在教室周围布置保护咒语，计算周长。</p>
+                        <p class="en">The classroom is rectangular, 15 m long and 8 m wide. Protection spells need to be placed around it. Calculate the perimeter.</p>
+                        <p class="zh">计算：周长 = (15 + 8) × 2 = 23 × 2 = 46 米</p>
+                        <p class="en">Calculation: Perimeter = (15 + 8) × 2 = 23 × 2 = 46 m</p>
+                    </div>
+                </div>
+
+                <h3>📝 魔法测验 | Magical Quiz</h3>
+                <div class="quiz-section">
+                    <form id="quiz-math4-2">
+                        <div class="quiz-question">
+                            <p>1. 5 千米 = ? 米</p>
+                            <p>5 kilometers = ? meters</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="A"> A) 500 米 | 500 m</label>
+                                <label><input type="radio" name="q1" value="B"> B) 5,000 米 | 5,000 m</label>
+                                <label><input type="radio" name="q1" value="C"> C) 50,000 米 | 50,000 m</label>
+                                <label><input type="radio" name="q1" value="D"> D) 500,000 米 | 500,000 m</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. 3,500 克 = ? 千克</p>
+                            <p>3,500 grams = ? kilograms</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="A"> A) 0.35 千克 | 0.35 kg</label>
+                                <label><input type="radio" name="q2" value="B"> B) 3.5 千克 | 3.5 kg</label>
+                                <label><input type="radio" name="q2" value="C"> C) 35 千克 | 35 kg</label>
+                                <label><input type="radio" name="q2" value="D"> D) 350 千克 | 350 kg</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. 一个正方形魔法阵，边长 9 米，周长是多少？</p>
+                            <p>A square magic circle has sides of 9 m. What's the perimeter?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="A"> A) 18 米 | 18 m</label>
+                                <label><input type="radio" name="q3" value="B"> B) 27 米 | 27 m</label>
+                                <label><input type="radio" name="q3" value="C"> C) 36 米 | 36 m</label>
+                                <label><input type="radio" name="q3" value="D"> D) 81 米 | 81 m</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>4. 魔药瓶装了 2,500 毫升魔药，等于多少升？</p>
+                            <p>A potion bottle contains 2,500 mL. How many liters?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="A"> A) 0.25 升 | 0.25 L</label>
+                                <label><input type="radio" name="q4" value="B"> B) 2.5 升 | 2.5 L</label>
+                                <label><input type="radio" name="q4" value="C"> C) 25 升 | 25 L</label>
+                                <label><input type="radio" name="q4" value="D"> D) 250 升 | 250 L</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. 魔法花园是长方形，长 20 米，宽 12 米，周长是多少？</p>
+                            <p>A magic garden is rectangular, 20 m long and 12 m wide. What's the perimeter?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="A"> A) 32 米 | 32 m</label>
+                                <label><input type="radio" name="q5" value="B"> B) 44 米 | 44 m</label>
+                                <label><input type="radio" name="q5" value="C"> C) 64 米 | 64 m</label>
+                                <label><input type="radio" name="q5" value="D"> D) 240 米 | 240 m</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" onclick="checkQuiz('math4-2', ['B','B','C','B','C'], 'math')">提交答案 | Submit Answers</button>
+                    </form>
+                    <div class="result-box" id="result-math4-2"></div>
+                </div>
+
+                <h3>📖 总结复盘 | Summary Review</h3>
+                <div class="summary-box">
+                    <div class="bilingual">
+                        <p class="zh"><strong>今天我们学习了：</strong></p>
+                        <p class="en"><strong>Today we learned:</strong></p>
+                        <ul>
+                            <li class="zh">✓ 公制长度单位换算（千米、米、厘米、毫米）</li>
+                            <li class="en">✓ Metric length conversions (km, m, cm, mm)</li>
+                            <li class="zh">✓ 公制质量单位换算（吨、千克、克）</li>
+                            <li class="en">✓ Metric mass conversions (t, kg, g)</li>
+                            <li class="zh">✓ 公制容量单位换算（升、毫升）</li>
+                            <li class="en">✓ Metric volume conversions (L, mL)</li>
+                            <li class="zh">✓ 长方形和正方形的周长计算</li>
+                            <li class="en">✓ Rectangle and square perimeter calculations</li>
+                        </ul>
+                        <p class="zh"><strong>🌟 魔法提示：</strong>单位换算要记住进制关系，大单位转小单位要乘，小单位转大单位要除！</p>
+                        <p class="en"><strong>🌟 Magical Tip:</strong> Remember conversion rates - multiply when going to smaller units, divide when going to larger units!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson: Grade 5 Math 1 - Fractions & Decimals -->
+        <div class="lesson-card" id="lesson-math5-1">
+            <div class="lesson-section">
+                <h2>🔮 第三课：分数与小数的魔法 | Lesson 3: Fraction & Decimal Magic</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">赫敏·格兰杰 | Hermione Granger</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('分数和小数就像魔法世界的两种语言，它们可以相互转换，帮助我们更精确地表达数量！', 'zh-CN')">🔊</span> "分数和小数就像魔法世界的两种语言，它们可以相互转换，帮助我们更精确地表达数量！"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Fractions and decimals are like two languages in the magical world. They can convert into each other, helping us express quantities more precisely!', 'en-US')">🔊</span> "Fractions and decimals are like two languages in the magical world. They can convert into each other, helping us express quantities more precisely!"</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">在霍格沃茨的高级数学课上，弗立维教授用魔杖在空中画出一个披萨，将它切成不同的份数。"看，"他说，"这就是分数的魔法！"</p>
+                    <p class="en">In Hogwarts' advanced mathematics class, Professor Flitwick uses his wand to draw a pizza in the air, cutting it into different portions. "Look," he says, "this is the magic of fractions!"</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语一：分数加减法 | Spell One: Adding & Subtracting Fractions</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('同分母分数相加减，分母不变，分子相加减', 'zh-CN')">🔊</span> 同分母：分母不变，分子相加减</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Same denominator: keep denominator, add or subtract numerators', 'en-US')">🔊</span> Same denominator: keep denominator, add/subtract numerators</p>
+                        <p class="zh">例如：2/7 + 3/7 = 5/7</p>
+                        <p class="en">Example: 2/7 + 3/7 = 5/7</p>
+                        <p class="zh">异分母：先通分，再计算</p>
+                        <p class="en">Different denominators: find common denominator first</p>
+                        <p class="zh">例如：1/2 + 1/3 = 3/6 + 2/6 = 5/6</p>
+                        <p class="en">Example: 1/2 + 1/3 = 3/6 + 2/6 = 5/6</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语二：分数乘除法 | Spell Two: Multiplying & Dividing Fractions</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('分数乘法：分子乘分子，分母乘分母。分数除法：除以一个数等于乘以它的倒数', 'zh-CN')">🔊</span> 乘法：分子×分子，分母×分母</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Multiplication: numerator times numerator, denominator times denominator. Division: dividing by a number equals multiplying by its reciprocal', 'en-US')">🔊</span> Multiplication: numerator × numerator, denominator × denominator</p>
+                        <p class="zh">例如：2/3 × 3/4 = 6/12 = 1/2</p>
+                        <p class="en">Example: 2/3 × 3/4 = 6/12 = 1/2</p>
+                        <p class="zh">除法：除以一个数 = 乘以它的倒数</p>
+                        <p class="en">Division: ÷ by a number = × by its reciprocal</p>
+                        <p class="zh">例如：1/2 ÷ 3/4 = 1/2 × 4/3 = 4/6 = 2/3</p>
+                        <p class="en">Example: 1/2 ÷ 3/4 = 1/2 × 4/3 = 4/6 = 2/3</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语三：分数小数百分数转换 | Spell Three: Fraction-Decimal-Percent Conversion</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('分数转小数：分子除以分母。小数转百分数：乘以100加百分号', 'zh-CN')">🔊</span> 分数 → 小数：分子 ÷ 分母</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Fraction to decimal: divide numerator by denominator. Decimal to percent: multiply by 100 and add percent sign', 'en-US')">🔊</span> Fraction → Decimal: numerator ÷ denominator</p>
+                        <p class="zh">例如：3/4 = 3 ÷ 4 = 0.75</p>
+                        <p class="en">Example: 3/4 = 3 ÷ 4 = 0.75</p>
+                        <p class="zh">小数 → 百分数：× 100%</p>
+                        <p class="en">Decimal → Percent: × 100%</p>
+                        <p class="zh">例如：0.75 = 75%</p>
+                        <p class="en">Example: 0.75 = 75%</p>
+                        <p class="zh">百分数 → 分数：÷ 100，化简</p>
+                        <p class="en">Percent → Fraction: ÷ 100, simplify</p>
+                        <p class="zh">例如：60% = 60/100 = 3/5</p>
+                        <p class="en">Example: 60% = 60/100 = 3/5</p>
+                    </div>
+                </div>
+
+                <h3>🎯 实操任务 | Practical Task</h3>
+                <div class="task-box">
+                    <div class="task-title">任务：帮助哈利分配魔法材料 | Task: Help Harry Distribute Magic Materials</div>
+                    <div class="bilingual">
+                        <p class="zh">哈利有一瓶魔药原料，他用掉了 2/5，给了赫敏 1/4，自己还剩多少？</p>
+                        <p class="en">Harry has a bottle of potion ingredients. He used 2/5 and gave Hermione 1/4. How much does he have left?</p>
+                        <p class="zh">解答：已用 = 2/5 + 1/4 = 8/20 + 5/20 = 13/20</p>
+                        <p class="en">Solution: Used = 2/5 + 1/4 = 8/20 + 5/20 = 13/20</p>
+                        <p class="zh">剩余 = 1 - 13/20 = 7/20</p>
+                        <p class="en">Remaining = 1 - 13/20 = 7/20</p>
+                    </div>
+                </div>
+
+                <h3>📝 魔法测验 | Magical Quiz</h3>
+                <div class="quiz-section">
+                    <form id="quiz-math5-1">
+                        <div class="quiz-question">
+                            <p>1. 3/8 + 1/8 = ?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="A"> A) 4/16</label>
+                                <label><input type="radio" name="q1" value="B"> B) 4/8 = 1/2</label>
+                                <label><input type="radio" name="q1" value="C"> C) 3/8</label>
+                                <label><input type="radio" name="q1" value="D"> D) 1/4</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. 2/3 × 3/4 = ?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="A"> A) 6/12 = 1/2</label>
+                                <label><input type="radio" name="q2" value="B"> B) 5/7</label>
+                                <label><input type="radio" name="q2" value="C"> C) 2/4</label>
+                                <label><input type="radio" name="q2" value="D"> D) 1/3</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. 0.6 转换成百分数是多少？| What is 0.6 as a percent?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="A"> A) 6%</label>
+                                <label><input type="radio" name="q3" value="B"> B) 0.6%</label>
+                                <label><input type="radio" name="q3" value="C"> C) 60%</label>
+                                <label><input type="radio" name="q3" value="D"> D) 600%</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>4. 25% 转换成分数是多少？| What is 25% as a fraction?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="A"> A) 1/4</label>
+                                <label><input type="radio" name="q4" value="B"> B) 1/2</label>
+                                <label><input type="radio" name="q4" value="C"> C) 25/100</label>
+                                <label><input type="radio" name="q4" value="D"> D) 2/5</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. 1/2 ÷ 1/4 = ?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="A"> A) 1/8</label>
+                                <label><input type="radio" name="q5" value="B"> B) 1/6</label>
+                                <label><input type="radio" name="q5" value="C"> C) 2</label>
+                                <label><input type="radio" name="q5" value="D"> D) 4</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" onclick="checkQuiz('math5-1', ['B','A','C','A','C'], 'math')">提交答案 | Submit Answers</button>
+                    </form>
+                    <div class="result-box" id="result-math5-1"></div>
+                </div>
+
+                <h3>📖 总结复盘 | Summary Review</h3>
+                <div class="summary-box">
+                    <div class="bilingual">
+                        <p class="zh"><strong>今天我们学习了：</strong></p>
+                        <p class="en"><strong>Today we learned:</strong></p>
+                        <ul>
+                            <li class="zh">✓ 分数的加减法（同分母和异分母）</li>
+                            <li class="en">✓ Adding and subtracting fractions (same/different denominators)</li>
+                            <li class="zh">✓ 分数的乘除法</li>
+                            <li class="en">✓ Multiplying and dividing fractions</li>
+                            <li class="zh">✓ 分数、小数、百分数之间的转换</li>
+                            <li class="en">✓ Converting between fractions, decimals, and percents</li>
+                        </ul>
+                        <p class="zh"><strong>🌟 魔法提示：</strong>分数运算要先化简，转换时要注意方向！</p>
+                        <p class="en"><strong>🌟 Magical Tip:</strong> Simplify fractions when operating, and pay attention to conversion direction!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson: Grade 5 Math 2 - Area & Volume -->
+        <div class="lesson-card" id="lesson-math5-2">
+            <div class="lesson-section">
+                <h2>🔮 第四课：面积与体积的魔法 | Lesson 4: Area & Volume Magic</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">麦格教授 | Professor McGonagall</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('理解面积和体积对于变形术至关重要。我们需要精确计算物体占据的空间！', 'zh-CN')">🔊</span> "理解面积和体积对于变形术至关重要。我们需要精确计算物体占据的空间！"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Understanding area and volume is crucial for Transfiguration. We need to precisely calculate the space objects occupy!', 'en-US')">🔊</span> "Understanding area and volume is crucial for Transfiguration. We need to precisely calculate the space objects occupy!"</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">在变形术课堂上，麦格教授将一个魔法箱子变大变小。"计算体积，"她说，"你就能知道这个箱子能装多少东西。"</p>
+                    <p class="en">In Transfiguration class, Professor McGonagall enlarges and shrinks a magic trunk. "Calculate the volume," she says, "and you'll know how much the trunk can hold."</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语一：长方形面积 | Spell One: Rectangle Area</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('长方形面积等于长乘以宽', 'zh-CN')">🔊</span> 面积 = 长 × 宽</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Rectangle area equals length times width', 'en-US')">🔊</span> Area = Length × Width</p>
+                        <p class="zh">例如：魔法地毯长 6 米，宽 4 米，面积 = 6 × 4 = 24 平方米</p>
+                        <p class="en">Example: Magic carpet 6 m long, 4 m wide, Area = 6 × 4 = 24 m²</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语二：正方形面积 | Spell Two: Square Area</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('正方形面积等于边长乘以边长', 'zh-CN')">🔊</span> 面积 = 边长 × 边长 = 边长²</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Square area equals side times side', 'en-US')">🔊</span> Area = Side × Side = Side²</p>
+                        <p class="zh">例如：魔法棋盘边长 8 厘米，面积 = 8 × 8 = 64 平方厘米</p>
+                        <p class="en">Example: Chess board side 8 cm, Area = 8 × 8 = 64 cm²</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语三：三角形面积 | Spell Three: Triangle Area</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('三角形面积等于底乘以高除以二', 'zh-CN')">🔊</span> 面积 = 底 × 高 ÷ 2</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Triangle area equals base times height divided by two', 'en-US')">🔊</span> Area = Base × Height ÷ 2</p>
+                        <p class="zh">例如：魔法旗帜底 10 米，高 6 米，面积 = 10 × 6 ÷ 2 = 30 平方米</p>
+                        <p class="en">Example: Magic banner base 10 m, height 6 m, Area = 10 × 6 ÷ 2 = 30 m²</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法咒语四：长方体体积 | Spell Four: Rectangular Prism Volume</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('长方体体积等于长乘以宽乘以高', 'zh-CN')">🔊</span> 体积 = 长 × 宽 × 高</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Rectangular prism volume equals length times width times height', 'en-US')">🔊</span> Volume = Length × Width × Height</p>
+                        <p class="zh">例如：魔法箱长 5 米，宽 3 米，高 2 米，体积 = 5 × 3 × 2 = 30 立方米</p>
+                        <p class="en">Example: Magic trunk 5 m × 3 m × 2 m, Volume = 5 × 3 × 2 = 30 m³</p>
+                    </div>
+                </div>
+
+                <h3>🎯 实操任务 | Practical Task</h3>
+                <div class="task-box">
+                    <div class="task-title">任务：计算魔法教室的地板面积和体积 | Task: Calculate Classroom Floor Area and Volume</div>
+                    <div class="bilingual">
+                        <p class="zh">魔法教室长 12 米，宽 8 米，高 4 米。计算地板面积和教室体积。</p>
+                        <p class="en">Magic classroom is 12 m long, 8 m wide, 4 m high. Calculate floor area and room volume.</p>
+                        <p class="zh">地板面积 = 12 × 8 = 96 平方米</p>
+                        <p class="en">Floor area = 12 × 8 = 96 m²</p>
+                        <p class="zh">体积 = 12 × 8 × 4 = 384 立方米</p>
+                        <p class="en">Volume = 12 × 8 × 4 = 384 m³</p>
+                    </div>
+                </div>
+
+                <h3>📝 魔法测验 | Magical Quiz</h3>
+                <div class="quiz-section">
+                    <form id="quiz-math5-2">
+                        <div class="quiz-question">
+                            <p>1. 长方形长 15 米，宽 9 米，面积是多少？</p>
+                            <p>Rectangle 15 m long, 9 m wide. What's the area?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="A"> A) 48 m²</label>
+                                <label><input type="radio" name="q1" value="B"> B) 135 m²</label>
+                                <label><input type="radio" name="q1" value="C"> C) 24 m²</label>
+                                <label><input type="radio" name="q1" value="D"> D) 150 m²</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. 正方形边长 11 厘米，面积是多少？</p>
+                            <p>Square side 11 cm. What's the area?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="A"> A) 44 cm²</label>
+                                <label><input type="radio" name="q2" value="B"> B) 22 cm²</label>
+                                <label><input type="radio" name="q2" value="C"> C) 121 cm²</label>
+                                <label><input type="radio" name="q2" value="D"> D) 110 cm²</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. 三角形底 14 米，高 8 米，面积是多少？</p>
+                            <p>Triangle base 14 m, height 8 m. What's the area?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="A"> A) 112 m²</label>
+                                <label><input type="radio" name="q3" value="B"> B) 22 m²</label>
+                                <label><input type="radio" name="q3" value="C"> C) 56 m²</label>
+                                <label><input type="radio" name="q3" value="D"> D) 44 m²</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>4. 长方体长 6 米，宽 4 米，高 3 米，体积是多少？</p>
+                            <p>Rectangular prism 6 m × 4 m × 3 m. What's the volume?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="A"> A) 24 m³</label>
+                                <label><input type="radio" name="q4" value="B"> B) 72 m³</label>
+                                <label><input type="radio" name="q4" value="C"> C) 13 m³</label>
+                                <label><input type="radio" name="q4" value="D"> D) 48 m³</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. 一个正方形魔法阵，面积 144 平方米，边长是多少？</p>
+                            <p>A square magic circle has area 144 m². What's the side length?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="A"> A) 36 米 | 36 m</label>
+                                <label><input type="radio" name="q5" value="B"> B) 12 米 | 12 m</label>
+                                <label><input type="radio" name="q5" value="C"> C) 72 米 | 72 m</label>
+                                <label><input type="radio" name="q5" value="D"> D) 24 米 | 24 m</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" onclick="checkQuiz('math5-2', ['B','C','C','B','B'], 'math')">提交答案 | Submit Answers</button>
+                    </form>
+                    <div class="result-box" id="result-math5-2"></div>
+                </div>
+
+                <h3>📖 总结复盘 | Summary Review</h3>
+                <div class="summary-box">
+                    <div class="bilingual">
+                        <p class="zh"><strong>今天我们学习了：</strong></p>
+                        <p class="en"><strong>Today we learned:</strong></p>
+                        <ul>
+                            <li class="zh">✓ 长方形面积计算公式</li>
+                            <li class="en">✓ Rectangle area formula</li>
+                            <li class="zh">✓ 正方形面积计算公式</li>
+                            <li class="en">✓ Square area formula</li>
+                            <li class="zh">✓ 三角形面积计算公式</li>
+                            <li class="en">✓ Triangle area formula</li>
+                            <li class="zh">✓ 长方体体积计算公式</li>
+                            <li class="en">✓ Rectangular prism volume formula</li>
+                        </ul>
+                        <p class="zh"><strong>🌟 魔法提示：</strong>面积用平方单位，体积用立方单位，别搞混了！</p>
+                        <p class="en"><strong>🌟 Magical Tip:</strong> Area uses square units, volume uses cubic units - don't confuse them!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson: Grade 4 Science 1 - Habitats & Plants -->
+        <div class="lesson-card" id="lesson-science4-1">
+            <div class="lesson-section">
+                <h2>🌿 第五课：魔法植物与栖息地 | Lesson 5: Magical Plants & Habitats</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">斯普劳特教授 | Professor Sprout</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('欢迎来到草药学课堂！今天我们将学习植物如何在不同的栖息地生长，以及它们与环境的关系。', 'zh-CN')">🔊</span> "欢迎来到草药学课堂！今天我们将学习植物如何在不同的栖息地生长，以及它们与环境的关系。"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Welcome to Herbology class! Today we will learn how plants grow in different habitats and their relationships with the environment.', 'en-US')">🔊</span> "Welcome to Herbology class! Today we'll learn how plants grow in different habitats and their relationships with the environment."</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">你走进霍格沃茨的温室，到处都是神奇的魔法植物。海格指着一株曼德拉草说："每种植物都有自己喜欢的家园，就像我们巫师一样！"</p>
+                    <p class="en">You enter Hogwarts' greenhouse filled with magical plants. Hagrid points to a Mandrake and says, "Every plant has its favorite home, just like us wizards!"</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法知识一：什么是栖息地？ | Knowledge One: What is a Habitat?</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('栖息地是生物生存的地方，提供食物、水、庇护所和空间', 'zh-CN')">🔊</span> 栖息地 = 生物生存的家园</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('A habitat is where living things survive, providing food, water, shelter, and space', 'en-US')">🔊</span> Habitat = Home where organisms live</p>
+                        <p class="zh">包含四要素：食物 (Food)、水 (Water)、庇护所 (Shelter)、空间 (Space)</p>
+                        <p class="en">Contains 4 elements: Food, Water, Shelter, Space</p>
+                        <p class="zh">例如：禁林是独角兽的栖息地，提供草料、溪水、树林和广阔空间</p>
+                        <p class="en">Example: Forbidden Forest is unicorn habitat, provides grass, streams, trees, and space</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法知识二：植物的生长需求 | Knowledge Two: Plant Growth Needs</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('植物需要阳光、水、空气和养分才能生长', 'zh-CN')">🔊</span> 植物生长需要：阳光、水、空气、养分</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Plants need sunlight, water, air, and nutrients to grow', 'en-US')">🔊</span> Plants need: Sunlight, Water, Air, Nutrients</p>
+                        <p class="zh">光合作用：叶绿素 + 阳光 + 水 + 二氧化碳 → 养分 + 氧气</p>
+                        <p class="en">Photosynthesis: Chlorophyll + Sunlight + Water + CO₂ → Nutrients + Oxygen</p>
+                        <p class="zh">例如：曼德拉草在温暖湿润的温室里长得最好</p>
+                        <p class="en">Example: Mandrakes grow best in warm, humid greenhouses</p>
+                    </div>
+                </div>
+
+                <div class="spell-box">
+                    <div class="spell-name">魔法知识三：动物栖息地 | Knowledge Three: Animal Habitats</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('不同动物适应不同的栖息地', 'zh-CN')">🔊</span> 不同动物有不同的适应特征</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Different animals adapt to different habitats', 'en-US')">🔊</span> Different animals have different adaptations</p>
+                        <p class="zh">森林：猫头鹰（夜视能力）、鹿（善于奔跑）</p>
+                        <p class="en">Forest: Owls (night vision), Deer (good at running)</p>
+                        <p class="zh">湖泊：巨型鱿鱼（游泳能力）、人鱼（水下呼吸）</p>
+                        <p class="en">Lake: Giant Squid (swimming), Merpeople (underwater breathing)</p>
+                    </div>
+                </div>
+
+                <h3>🎯 实操任务 | Practical Task</h3>
+                <div class="task-box">
+                    <div class="task-title">任务：设计一个魔法生物的栖息地 | Task: Design a Habitat for a Magical Creature</div>
+                    <div class="bilingual">
+                        <p class="zh">选择一种魔法生物（如鹰头马身有翼兽），列出它需要的栖息地要素：</p>
+                        <p class="en">Choose a magical creature (like a Hippogriff) and list its habitat needs:</p>
+                        <p class="zh">1. 食物：小动物、鱼类</p>
+                        <p class="en">1. Food: Small animals, fish</p>
+                        <p class="zh">2. 水源：清洁的溪流或湖泊</p>
+                        <p class="en">2. Water: Clean streams or lakes</p>
+                        <p class="zh">3. 庇护所：树林、洞穴</p>
+                        <p class="en">3. Shelter: Trees, caves</p>
+                        <p class="zh">4. 空间：开阔的飞行区域</p>
+                        <p class="en">4. Space: Open flying areas</p>
+                    </div>
+                </div>
+
+                <h3>📝 魔法测验 | Magical Quiz</h3>
+                <div class="quiz-section">
+                    <form id="quiz-science4-1">
+                        <div class="quiz-question">
+                            <p>1. 栖息地必须提供哪些基本要素？</p>
+                            <p>What basic elements must a habitat provide?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="A"> A) 食物、水、庇护所、空间 | Food, Water, Shelter, Space</label>
+                                <label><input type="radio" name="q1" value="B"> B) 只需要食物 | Only food</label>
+                                <label><input type="radio" name="q1" value="C"> C) 只需要水 | Only water</label>
+                                <label><input type="radio" name="q1" value="D"> D) 只需要阳光 | Only sunlight</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>2. 植物进行光合作用需要什么？</p>
+                            <p>What do plants need for photosynthesis?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="A"> A) 只需要水 | Only water</label>
+                                <label><input type="radio" name="q2" value="B"> B) 阳光、水、二氧化碳 | Sunlight, water, CO₂</label>
+                                <label><input type="radio" name="q2" value="C"> C) 只需要土壤 | Only soil</label>
+                                <label><input type="radio" name="q2" value="D"> D) 只需要空气 | Only air</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>3. 哪个是森林动物的适应特征？</p>
+                            <p>Which is an adaptation for forest animals?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="A"> A) 鱼鳃（用于水下呼吸）| Gills (for underwater breathing)</label>
+                                <label><input type="radio" name="q3" value="B"> B) 爪子和攀爬能力 | Claws and climbing ability</label>
+                                <label><input type="radio" name="q3" value="C"> C) 翅膀（仅用于长距离迁徙）| Wings (only for long migration)</label>
+                                <label><input type="radio" name="q3" value="D"> D) 厚厚的脂肪层 | Thick blubber layer</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>4. 人类活动如何影响栖息地？</p>
+                            <p>How do human activities affect habitats?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="A"> A) 完全没有影响 | No impact at all</label>
+                                <label><input type="radio" name="q4" value="B"> B) 只有积极影响 | Only positive impacts</label>
+                                <label><input type="radio" name="q4" value="C"> C) 可能破坏或保护栖息地 | Can destroy or protect habitats</label>
+                                <label><input type="radio" name="q4" value="D"> D) 只帮助植物生长 | Only helps plants grow</label>
+                            </div>
+                        </div>
+
+                        <div class="quiz-question">
+                            <p>5. 下列哪项不是植物生长的必需条件？</p>
+                            <p>Which is NOT essential for plant growth?</p>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="A"> A) 阳光 | Sunlight</label>
+                                <label><input type="radio" name="q5" value="B"> B) 水 | Water</label>
+                                <label><input type="radio" name="q5" value="C"> C) 音乐 | Music</label>
+                                <label><input type="radio" name="q5" value="D"> D) 养分 | Nutrients</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn" onclick="checkQuiz('science4-1', ['A','B','B','C','C'], 'science')">提交答案 | Submit Answers</button>
+                    </form>
+                    <div class="result-box" id="result-science4-1"></div>
+                </div>
+
+                <h3>📖 总结复盘 | Summary Review</h3>
+                <div class="summary-box">
+                    <div class="bilingual">
+                        <p class="zh"><strong>今天我们学习了：</strong></p>
+                        <p class="en"><strong>Today we learned:</strong></p>
+                        <ul>
+                            <li class="zh">✓ 栖息地的定义和四要素</li>
+                            <li class="en">✓ Habitat definition and 4 elements</li>
+                            <li class="zh">✓ 植物的生长需求和光合作用</li>
+                            <li class="en">✓ Plant growth needs and photosynthesis</li>
+                            <li class="zh">✓ 动物对不同栖息地的适应</li>
+                            <li class="en">✓ Animal adaptations to different habitats</li>
+                            <li class="zh">✓ 人类活动对栖息地的影响</li>
+                            <li class="en">✓ Human impact on habitats</li>
+                        </ul>
+                        <p class="zh"><strong>🌟 魔法提示：</strong>保护栖息地就是保护生物多样性！</p>
+                        <p class="en"><strong>🌟 Magical Tip:</strong> Protecting habitats means protecting biodiversity!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lesson: Grade 4 Science 2 - Matter & Electricity -->
+        <div class="lesson-card" id="lesson-science4-2">
+            <div class="lesson-section">
+                <h2>⚡ 第六课：物质变化与电的魔法 | Lesson 6: Matter Changes & Electricity Magic</h2>
+                
+                <div class="character-box">
+                    <div class="character-name">斯内普教授 | Professor Snape</div>
+                    <div class="bilingual">
+                        <p class="zh">🗣️ <span class="audio-icon" onclick="speak('物质的变化无处不在，从冰融化到魔药沸腾。理解这些变化，你就能掌握魔药学的精髓。', 'zh-CN')">🔊</span> "物质的变化无处不在，从冰融化到魔药沸腾。理解这些变化，你就能掌握魔药学的精髓。"</p>
+                        <p class="en">🗣️ <span class="audio-icon" onclick="speak('Matter changes are everywhere, from ice melting to potions boiling. Understand these changes and you will master the essence of Potions.', 'en-US')">🔊</span> "Matter changes are everywhere, from ice melting to potions boiling. Understand these changes and you'll master the essence of Potions."</p>
+                    </div>
+                </div>
+
+                <h3>✨ 魔法场景 | Magical Scene</h3>
+                <div class="bilingual">
+                    <p class="zh">在魔药课上，你看到各种物质在大釜中变化：固体融化、液体蒸发、气体凝结。斯内普严肃地说："控制这些变化，你就能调配完美的魔药。"</p>
+                    <p class="en">In Potions class, you see various substances changing in cauldrons: solids melting, liquids evaporating, gases condensing. Snape says sternly, "Control these changes and you can brew perfect potions."</p>
+                </div>
+
+                <h3>📚 知识点讲解 | Knowledge Points</h3>
+                
+                <div class="spell-box">
+                    <div class="spell-name">魔法知识一：物质的三态 | Knowledge One: Three States of Matter</div>
+                    <div class="spell-description bilingual">
+                        <p class="zh">🗣️ 
