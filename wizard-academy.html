@@ -1,0 +1,2374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>魔法学院 · Wizard Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Lato:wght@300;400;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" onerror="console.log('fonts unavailable, using fallback')">
+<style>
+  /* Fallback font stack if Google Fonts unavailable */
+  @font-face { font-family: 'Cinzel'; src: local('Georgia'), local('Times New Roman'); }
+</style>
+<style>
+:root {
+  --gold: #f5c518;
+  --gold-dark: #c9a227;
+  --gold-light: #ffe566;
+  --scarlet: #7f0000;
+  --scarlet-light: #ae1212;
+  --parchment: #f4e4bc;
+  --parchment-dark: #e8d5a3;
+  --ink: #1a0a00;
+  --ink-light: #3d1f00;
+  --midnight: #0a0a1a;
+  --midnight-blue: #0d1b4b;
+  --deep-purple: #1a0a2e;
+  --magic-blue: #4a90d9;
+  --magic-glow: #7ec8f7;
+  --green-slytherin: #1a472a;
+  --silver: #c0c0c0;
+  --hufflepuff-yellow: #f0c040;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Lato', 'ZCOOL XiaoWei', sans-serif;
+  background: var(--midnight);
+  color: var(--parchment);
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M7 2l1 4-3 2 3 2-1 4 4-2 4 2-1-4 3-2-3-2 1-4z' fill='%23f5c518' stroke='%23c9a227' stroke-width='1'/%3E%3C/svg%3E") 12 12, auto;
+}
+
+/* ===== STARS BACKGROUND ===== */
+.stars-bg {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+}
+.star {
+  position: absolute; background: white; border-radius: 50%;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+}
+@keyframes twinkle {
+  0%,100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* Floating particles */
+.particle {
+  position: fixed; pointer-events: none; z-index: 0;
+  animation: floatUp var(--dur, 8s) ease-in-out infinite var(--delay, 0s);
+  font-size: var(--size, 14px);
+  opacity: 0;
+}
+@keyframes floatUp {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
+}
+
+/* ===== SCREENS ===== */
+.screen { display: none; position: relative; z-index: 1; min-height: 100vh; }
+.screen.active { display: block; }
+
+/* ===== CHARACTER SELECT ===== */
+#screen-character {
+  display: none;
+  background: radial-gradient(ellipse at center, #1a0d4a 0%, #0a0a1a 70%);
+  align-items: center; justify-content: center; flex-direction: column;
+  padding: 40px 20px;
+}
+#screen-character.active { display: flex; }
+
+.hogwarts-crest {
+  font-size: 80px;
+  animation: floatCrest 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px #f5c518);
+  margin-bottom: 10px;
+}
+@keyframes floatCrest {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+}
+
+.title-main {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(24px, 5vw, 48px);
+  font-weight: 800;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(245,197,24,0.8), 0 0 60px rgba(245,197,24,0.4);
+  text-align: center;
+  letter-spacing: 3px;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+.title-sub {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: clamp(16px, 3vw, 24px);
+  color: var(--parchment);
+  text-align: center;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 20px rgba(245,197,24,0.6), 0 0 40px rgba(245,197,24,0.3); }
+  50% { text-shadow: 0 0 40px rgba(245,197,24,1), 0 0 80px rgba(245,197,24,0.6), 0 0 120px rgba(245,197,24,0.3); }
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  max-width: 900px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+.character-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border: 2px solid rgba(245,197,24,0.3);
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.character-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--house-color, rgba(245,197,24,0.1));
+  opacity: 0; transition: opacity 0.3s;
+  border-radius: 14px;
+}
+.character-card:hover {
+  transform: translateY(-12px) scale(1.05);
+  border-color: var(--gold);
+  box-shadow: 0 20px 60px rgba(245,197,24,0.3), 0 0 40px var(--house-glow, rgba(245,197,24,0.2));
+}
+.character-card:hover::before { opacity: 1; }
+
+.char-avatar {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 12px;
+  animation: charFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+}
+@keyframes charFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.char-name-en { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); font-weight: 600; }
+.char-name-zh { font-size: 13px; color: var(--parchment); opacity: 0.8; margin-top: 4px; }
+.char-house { font-size: 11px; margin-top: 6px; padding: 3px 10px; border-radius: 20px; display: inline-block; }
+.char-trait { font-size: 11px; color: var(--parchment); opacity: 0.6; margin-top: 6px; font-style: italic; }
+
+/* House colors */
+.house-gryffindor { --house-color: rgba(174,18,18,0.15); --house-glow: rgba(174,18,18,0.3); }
+.house-gryffindor .char-house { background: rgba(174,18,18,0.3); color: #ff9999; border: 1px solid rgba(174,18,18,0.5); }
+.house-hufflepuff { --house-color: rgba(240,192,64,0.15); --house-glow: rgba(240,192,64,0.3); }
+.house-hufflepuff .char-house { background: rgba(240,192,64,0.2); color: #ffe066; border: 1px solid rgba(240,192,64,0.5); }
+.house-ravenclaw { --house-color: rgba(74,144,217,0.15); --house-glow: rgba(74,144,217,0.3); }
+.house-ravenclaw .char-house { background: rgba(74,144,217,0.2); color: #a0d0ff; border: 1px solid rgba(74,144,217,0.5); }
+.house-slytherin { --house-color: rgba(26,71,42,0.3); --house-glow: rgba(26,71,42,0.5); }
+.house-slytherin .char-house { background: rgba(26,71,42,0.4); color: #80d080; border: 1px solid rgba(26,71,42,0.7); }
+
+/* ===== MAIN APP ===== */
+#screen-main { background: radial-gradient(ellipse at 20% 0%, #1a0d4a 0%, #0a0a1a 50%, #0d0a05 100%); }
+
+/* Header */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(to bottom, rgba(10,10,26,0.98) 0%, rgba(10,10,26,0.9) 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245,197,24,0.2);
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+
+.header-left { display: flex; align-items: center; gap: 12px; }
+.player-avatar-sm { font-size: 32px; cursor: pointer; transition: transform 0.3s; }
+.player-avatar-sm:hover { transform: scale(1.2) rotate(10deg); }
+.player-info .player-name { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); }
+.player-info .player-house { font-size: 11px; opacity: 0.7; }
+
+.header-center {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(14px, 3vw, 20px);
+  color: var(--gold);
+  text-align: center;
+  flex: 1;
+}
+
+.header-right { display: flex; align-items: center; gap: 16px; }
+
+/* Points display */
+.points-display {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(245,197,24,0.1);
+  border: 1px solid rgba(245,197,24,0.3);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold);
+}
+.points-star { font-size: 16px; animation: spin 4s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Day badge */
+.day-badge {
+  background: linear-gradient(135deg, var(--scarlet-light), var(--scarlet));
+  border: 1px solid rgba(245,197,24,0.4);
+  border-radius: 12px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-family: 'Cinzel', serif;
+  color: var(--gold);
+}
+
+/* ===== NAV ===== */
+.app-nav {
+  display: flex; gap: 4px;
+  padding: 8px 20px;
+  background: rgba(0,0,0,0.3);
+  border-bottom: 1px solid rgba(245,197,24,0.1);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.app-nav::-webkit-scrollbar { display: none; }
+.nav-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(244,228,188,0.6);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Lato', sans-serif;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-btn:hover { color: var(--parchment); background: rgba(245,197,24,0.1); }
+.nav-btn.active {
+  background: linear-gradient(135deg, rgba(245,197,24,0.25), rgba(245,197,24,0.1));
+  border-color: rgba(245,197,24,0.5);
+  color: var(--gold);
+}
+
+/* ===== CONTENT PANELS ===== */
+.panel { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+.panel.active { display: block; animation: fadeInUp 0.5s ease; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== STORY PANEL ===== */
+.story-date-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.story-date {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  color: var(--gold);
+  opacity: 0.7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.story-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(20px, 4vw, 32px);
+  font-weight: 800;
+  color: var(--gold);
+  margin-top: 8px;
+  line-height: 1.3;
+  text-shadow: 0 0 20px rgba(245,197,24,0.5);
+}
+.story-subtitle {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: clamp(16px, 3vw, 22px);
+  color: var(--parchment);
+  margin-top: 6px;
+  opacity: 0.9;
+}
+.story-subject-tags {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  margin-top: 12px;
+}
+.subject-tag {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tag-math { background: rgba(74,144,217,0.2); color: #7ec8f7; border: 1px solid rgba(74,144,217,0.4); }
+.tag-science { background: rgba(50,180,80,0.2); color: #80e0a0; border: 1px solid rgba(50,180,80,0.4); }
+.tag-social { background: rgba(240,120,60,0.2); color: #f0a080; border: 1px solid rgba(240,120,60,0.4); }
+.tag-english { background: rgba(180,80,200,0.2); color: #d0a0e8; border: 1px solid rgba(180,80,200,0.4); }
+
+/* Story illustration */
+.story-illustration {
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  border: 2px solid rgba(245,197,24,0.3);
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #1a0d4a 0%, #0a1628 50%, #1a0505 100%);
+}
+.story-scene {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.scene-emoji {
+  font-size: 48px;
+  position: absolute;
+  filter: drop-shadow(0 0 15px rgba(245,197,24,0.8));
+}
+
+/* Floating magic effects in scene */
+.magic-particle {
+  position: absolute;
+  animation: magicFloat var(--d,4s) ease-in-out infinite var(--dl,0s);
+  font-size: var(--s,20px);
+}
+@keyframes magicFloat {
+  0%,100% { transform: translate(0,0) rotate(0deg); opacity: 0.6; }
+  33% { transform: translate(var(--tx,20px), var(--ty,-30px)) rotate(120deg); opacity: 1; }
+  66% { transform: translate(calc(var(--tx,20px)*-0.5), var(--ty,-50px)) rotate(240deg); opacity: 0.8; }
+}
+
+/* Story text */
+.story-body {
+  background: linear-gradient(135deg, rgba(244,228,188,0.05) 0%, rgba(244,228,188,0.02) 100%);
+  border: 1px solid rgba(245,197,24,0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.story-body::before {
+  content: '📜';
+  position: absolute;
+  top: -14px; left: 20px;
+  font-size: 24px;
+}
+
+.story-paragraph {
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 8px;
+  padding: 8px;
+  border-left: 3px solid transparent;
+}
+.story-paragraph:hover { background: rgba(245,197,24,0.05); border-left-color: rgba(245,197,24,0.3); }
+.story-paragraph.highlighted { background: rgba(245,197,24,0.1); border-left-color: var(--gold); }
+.story-paragraph.reading { background: rgba(74,144,217,0.1); border-left-color: var(--magic-blue); animation: readingPulse 1s ease infinite; }
+@keyframes readingPulse { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 15px rgba(74,144,217,0.3); } }
+
+.para-en {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--parchment);
+  margin-bottom: 6px;
+}
+.para-zh {
+  font-family: 'ZCOOL XiaoWei', serif;
+  font-size: 14px;
+  line-height: 1.8;
+  color: rgba(244,228,188,0.7);
+  font-style: italic;
+  border-left: 2px solid rgba(245,197,24,0.2);
+  padding-left: 10px;
+}
+
+/* Story controls */
+.story-controls {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 20px;
+}
+.story-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: 1px solid rgba(245,197,24,0.4);
+  background: rgba(245,197,24,0.1);
+  color: var(--gold);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Cinzel', serif;
+}
+.story-btn:hover { background: rgba(245,197,24,0.2); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245,197,24,0.2); }
+.story-btn.active { background: rgba(74,144,217,0.3); border-color: var(--magic-blue); color: var(--magic-glow); }
+.story-btn.playing { animation: btnPulse 1s ease infinite; }
+@keyframes btnPulse { 0%,100% { box-shadow: 0 0 10px rgba(74,144,217,0.3); } 50% { box-shadow: 0 0 25px rgba(74,144,217,0.6); } }
+
+/* Speed control */
+.speed-selector {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(245,197,24,0.2);
+  background: rgba(0,0,0,0.3);
+}
+.speed-selector label { font-size: 12px; color: rgba(244,228,188,0.6); }
+.speed-selector select {
+  background: transparent; border: none; color: var(--gold);
+  font-size: 12px; cursor: pointer; outline: none;
+}
+.speed-selector select option { background: #1a0d4a; }
+
+/* ===== KNOWLEDGE CARDS ===== */
+.knowledge-section {
+  margin-top: 24px;
+}
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(245,197,24,0.4), transparent);
+}
+
+.knowledge-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.knowledge-card {
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.knowledge-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+}
+.knowledge-card::before {
+  content: var(--icon);
+  position: absolute;
+  right: 16px; top: 16px;
+  font-size: 28px;
+  opacity: 0.3;
+  transition: all 0.3s;
+}
+.knowledge-card:hover::before { opacity: 0.6; transform: scale(1.2); }
+
+.kc-math { background: linear-gradient(135deg, rgba(74,144,217,0.15), rgba(74,144,217,0.05)); border-color: rgba(74,144,217,0.3); --icon: '🔢'; }
+.kc-science { background: linear-gradient(135deg, rgba(50,180,80,0.15), rgba(50,180,80,0.05)); border-color: rgba(50,180,80,0.3); --icon: '🔬'; }
+.kc-social { background: linear-gradient(135deg, rgba(240,120,60,0.15), rgba(240,120,60,0.05)); border-color: rgba(240,120,60,0.3); --icon: '🌍'; }
+.kc-english { background: linear-gradient(135deg, rgba(180,80,200,0.15), rgba(180,80,200,0.05)); border-color: rgba(180,80,200,0.3); --icon: '📚'; }
+
+.kc-subject {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.7;
+}
+.kc-math .kc-subject { color: var(--magic-blue); }
+.kc-science .kc-subject { color: #80e0a0; }
+.kc-social .kc-subject { color: #f0a080; }
+.kc-english .kc-subject { color: #d0a0e8; }
+
+.kc-title { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--gold); margin-bottom: 6px; }
+.kc-title-zh { font-family: 'ZCOOL XiaoWei', serif; font-size: 13px; color: var(--parchment); margin-bottom: 10px; opacity: 0.8; }
+.kc-explanation { font-size: 13px; line-height: 1.7; color: rgba(244,228,188,0.75); }
+.kc-explanation-zh { font-family: 'ZCOOL XiaoWei', serif; font-size: 12px; line-height: 1.7; color: rgba(244,228,188,0.6); margin-top: 8px; }
+
+/* ===== DICTATION PANEL ===== */
+.dictation-setup {
+  background: linear-gradient(135deg, rgba(244,228,188,0.05), rgba(244,228,188,0.02));
+  border: 1px solid rgba(245,197,24,0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.dictation-modes {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.mode-btn {
+  flex: 1; min-width: 140px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(245,197,24,0.2);
+  background: rgba(0,0,0,0.3);
+  color: var(--parchment);
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+.mode-btn:hover, .mode-btn.active {
+  border-color: var(--gold);
+  background: rgba(245,197,24,0.1);
+  color: var(--gold);
+}
+.mode-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+.mode-name { font-family: 'Cinzel', serif; font-size: 13px; }
+.mode-desc { font-size: 11px; opacity: 0.6; margin-top: 4px; }
+
+/* Word list for dictation */
+.word-list {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.word-chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(245,197,24,0.3);
+  background: rgba(245,197,24,0.05);
+  font-size: 13px;
+  color: var(--parchment);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.word-chip:hover { background: rgba(245,197,24,0.15); color: var(--gold); }
+.word-chip.selected { background: rgba(74,144,217,0.2); border-color: var(--magic-blue); color: var(--magic-glow); }
+
+.start-dictation-btn {
+  width: 100%;
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid var(--gold);
+  background: linear-gradient(135deg, rgba(245,197,24,0.2), rgba(245,197,24,0.1));
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.start-dictation-btn:hover {
+  background: linear-gradient(135deg, rgba(245,197,24,0.35), rgba(245,197,24,0.2));
+  box-shadow: 0 0 30px rgba(245,197,24,0.3);
+  transform: translateY(-2px);
+}
+
+/* Dictation active */
+.dictation-active {
+  display: none;
+  text-align: center;
+  padding: 24px;
+}
+.dictation-active.show { display: block; }
+
+.word-prompt {
+  font-size: 40px;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  margin: 20px 0;
+  animation: wordAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes wordAppear {
+  from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.word-hint { font-size: 13px; color: rgba(244,228,188,0.5); margin-bottom: 20px; }
+
+.dictation-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 2px solid rgba(245,197,24,0.4);
+  background: rgba(0,0,0,0.4);
+  color: var(--parchment);
+  font-size: 20px;
+  text-align: center;
+  outline: none;
+  font-family: 'Cinzel', serif;
+  transition: all 0.3s;
+  letter-spacing: 3px;
+}
+.dictation-input:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(245,197,24,0.3); }
+.dictation-input.correct { border-color: #80e0a0; color: #80e0a0; box-shadow: 0 0 20px rgba(80,200,80,0.4); }
+.dictation-input.wrong { border-color: #ff6060; color: #ff6060; animation: shake 0.4s; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.dictation-nav {
+  display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+}
+.dict-btn {
+  padding: 10px 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(245,197,24,0.4);
+  background: rgba(245,197,24,0.1);
+  color: var(--gold);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.dict-btn:hover { background: rgba(245,197,24,0.2); }
+
+.dictation-score {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,197,24,0.1);
+  border: 1px solid rgba(245,197,24,0.3);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%; height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--magic-blue), var(--gold));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Results */
+.dictation-results {
+  display: none;
+  text-align: center;
+  padding: 24px;
+}
+.dictation-results.show { display: block; animation: fadeInUp 0.5s ease; }
+.result-emoji { font-size: 80px; animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes bounceIn { from { transform: scale(0); } 80% { transform: scale(1.2); } to { transform: scale(1); } }
+.result-score { font-family: 'Cinzel', serif; font-size: 48px; color: var(--gold); margin: 16px 0; }
+.result-msg { font-size: 16px; color: var(--parchment); margin-bottom: 20px; }
+.result-breakdown { text-align: left; }
+.result-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+}
+.result-item .word { color: var(--gold); font-family: 'Cinzel', serif; min-width: 120px; }
+.result-item .answer { color: rgba(244,228,188,0.6); }
+.result-item .status { margin-left: auto; }
+
+/* ===== ACHIEVEMENTS / POINTS PANEL ===== */
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.achievement-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.achievement-card.earned {
+  border-color: rgba(245,197,24,0.5);
+  background: linear-gradient(135deg, rgba(245,197,24,0.1), rgba(245,197,24,0.05));
+  box-shadow: 0 0 20px rgba(245,197,24,0.1);
+}
+.achievement-card.locked {
+  background: rgba(0,0,0,0.3);
+  filter: grayscale(0.8);
+}
+.achievement-icon { font-size: 40px; display: block; margin-bottom: 10px; }
+.achievement-name { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-bottom: 4px; }
+.achievement-desc { font-size: 11px; color: rgba(244,228,188,0.5); line-height: 1.4; }
+.achievement-pts { font-size: 10px; color: var(--gold); margin-top: 6px; }
+.achievement-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 16px;
+}
+
+/* House cup */
+.house-cup {
+  background: linear-gradient(135deg, rgba(245,197,24,0.1), rgba(245,197,24,0.05));
+  border: 1px solid rgba(245,197,24,0.3);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.cup-title { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold); text-align: center; margin-bottom: 16px; }
+.house-bars { display: flex; flex-direction: column; gap: 10px; }
+.house-bar {
+  display: flex; align-items: center; gap: 12px;
+}
+.house-bar-label { font-size: 13px; min-width: 100px; }
+.house-bar-track {
+  flex: 1; height: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.house-bar-fill { height: 100%; border-radius: 6px; transition: width 1s ease; }
+.house-bar-pts { font-size: 12px; color: var(--gold); min-width: 40px; text-align: right; }
+
+/* ===== QUIZ PANEL ===== */
+.quiz-container { max-width: 600px; margin: 0 auto; }
+.quiz-question-num { font-size: 12px; color: rgba(244,228,188,0.5); margin-bottom: 8px; text-align: center; }
+.quiz-question {
+  background: linear-gradient(135deg, rgba(245,197,24,0.08), rgba(245,197,24,0.03));
+  border: 1px solid rgba(245,197,24,0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--parchment);
+}
+.quiz-question-zh { font-family: 'ZCOOL XiaoWei', serif; font-size: 14px; color: rgba(244,228,188,0.7); margin-top: 10px; }
+
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
+  color: var(--parchment);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+  text-align: left;
+  display: flex; align-items: center; gap: 12px;
+}
+.quiz-option:hover { border-color: rgba(245,197,24,0.4); background: rgba(245,197,24,0.08); }
+.quiz-option.correct { border-color: #80e0a0; background: rgba(80,200,80,0.15); color: #80e0a0; }
+.quiz-option.wrong { border-color: #ff6060; background: rgba(200,60,60,0.15); color: #ff8080; }
+.quiz-option.disabled { cursor: not-allowed; pointer-events: none; }
+
+.option-letter {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-family: 'Cinzel', serif;
+  flex-shrink: 0;
+}
+
+.quiz-feedback {
+  display: none; padding: 16px; border-radius: 12px; margin-top: 12px;
+  font-size: 14px; line-height: 1.6;
+}
+.quiz-feedback.show { display: block; animation: fadeInUp 0.4s ease; }
+.quiz-feedback.correct { background: rgba(80,200,80,0.1); border: 1px solid rgba(80,200,80,0.3); color: #80e0a0; }
+.quiz-feedback.wrong { background: rgba(200,60,60,0.1); border: 1px solid rgba(200,60,60,0.3); color: #ff8080; }
+
+.quiz-next-btn {
+  width: 100%; margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(245,197,24,0.4);
+  background: rgba(245,197,24,0.1);
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: none;
+}
+.quiz-next-btn.show { display: block; }
+.quiz-next-btn:hover { background: rgba(245,197,24,0.2); }
+
+/* ===== POINTS ANIMATION ===== */
+.points-pop {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  color: var(--gold);
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(245,197,24,0.8);
+  animation: pointsPop 1.5s ease forwards;
+}
+@keyframes pointsPop {
+  0% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 1; transform: translateY(-20px) scale(1.2); }
+  80% { opacity: 1; transform: translateY(-60px) scale(1); }
+  100% { opacity: 0; transform: translateY(-80px) scale(0.8); }
+}
+
+/* ===== CALENDAR ===== */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cal-day.completed { background: rgba(245,197,24,0.15); border-color: rgba(245,197,24,0.3); color: var(--gold); }
+.cal-day.today { background: rgba(74,144,217,0.2); border-color: var(--magic-blue); color: var(--magic-glow); font-weight: bold; }
+.cal-day.empty { opacity: 0; pointer-events: none; }
+.cal-day:hover:not(.empty) { background: rgba(255,255,255,0.05); }
+
+/* ===== LOADING/MAGIC EFFECT ===== */
+.magic-loading {
+  position: fixed; inset: 0; z-index: 9000;
+  background: radial-gradient(ellipse at center, #1a0d4a 0%, #0a0a1a 100%);
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px;
+}
+.magic-loading.hidden { display: none; } /* fallback */
+.loading-wand { font-size: 60px; animation: wandMagic 1s ease-in-out infinite; }
+@keyframes wandMagic {
+  0%,100% { transform: rotate(-20deg) scale(1); }
+  50% { transform: rotate(20deg) scale(1.1); filter: drop-shadow(0 0 20px var(--gold)); }
+}
+.loading-text { font-family: 'Cinzel', serif; font-size: 18px; color: var(--gold); letter-spacing: 2px; }
+.loading-dots::after {
+  content: '';
+  animation: dots 1.5s steps(4) infinite;
+}
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .panel { padding: 12px; }
+  .knowledge-cards { grid-template-columns: 1fr; }
+  .character-grid { grid-template-columns: repeat(2, 1fr); }
+  .dictation-modes { flex-direction: column; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+::-webkit-scrollbar-thumb { background: rgba(245,197,24,0.3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(245,197,24,0.5); }
+
+/* Tooltip */
+.tooltip {
+  position: relative;
+}
+.tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10,10,26,0.95);
+  border: 1px solid rgba(245,197,24,0.3);
+  color: var(--parchment);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.tooltip:hover::after { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<!-- Stars Background -->
+<div class="stars-bg" id="stars-bg"></div>
+
+<!-- Loading Screen -->
+<div class="magic-loading" id="loading-screen">
+  <div class="loading-wand">🪄</div>
+  <div class="loading-text">施展魔法中<span class="loading-dots"></span></div>
+  <div style="font-size:13px;color:rgba(244,228,188,0.5);">Casting spells of knowledge...</div>
+</div>
+
+<!-- Character Select Screen -->
+<div class="screen" id="screen-character">
+  <div style="text-align:center;margin-bottom:30px;">
+    <div class="hogwarts-crest">⚡</div>
+    <div class="title-main">Wizard Academy</div>
+    <div class="title-sub">魔法学院 · 知识之旅</div>
+    <div style="font-size:13px;color:rgba(244,228,188,0.5);margin-top:10px;">选择你的魔法师角色 · Choose your wizard</div>
+  </div>
+
+  <div class="character-grid">
+    <div class="character-card house-gryffindor" onclick="selectCharacter('harry','⚡','Harry Potter','哈利·波特','格兰芬多','勇敢无畏')">
+      <span class="char-avatar">⚡</span>
+      <div class="char-name-en">Harry Potter</div>
+      <div class="char-name-zh">哈利·波特</div>
+      <span class="char-house">格兰芬多 · Gryffindor</span>
+      <div class="char-trait">勇敢无畏 · Brave & Bold</div>
+    </div>
+    <div class="character-card house-gryffindor" onclick="selectCharacter('hermione','📚','Hermione Granger','赫敏·格兰杰','格兰芬多','智慧好学')">
+      <span class="char-avatar">📚</span>
+      <div class="char-name-en">Hermione Granger</div>
+      <div class="char-name-zh">赫敏·格兰杰</div>
+      <span class="char-house">格兰芬多 · Gryffindor</span>
+      <div class="char-trait">智慧好学 · Wise & Studious</div>
+    </div>
+    <div class="character-card house-gryffindor" onclick="selectCharacter('ron','🎮','Ron Weasley','罗恩·韦斯莱','格兰芬多','忠诚勇敢')">
+      <span class="char-avatar">🎮</span>
+      <div class="char-name-en">Ron Weasley</div>
+      <div class="char-name-zh">罗恩·韦斯莱</div>
+      <span class="char-house">格兰芬多 · Gryffindor</span>
+      <div class="char-trait">忠诚勇敢 · Loyal & Brave</div>
+    </div>
+    <div class="character-card house-hufflepuff" onclick="selectCharacter('neville','🌿','Neville Longbottom','纳威·隆巴顿','赫奇帕奇','坚持不懈')">
+      <span class="char-avatar">🌿</span>
+      <div class="char-name-en">Neville Longbottom</div>
+      <div class="char-name-zh">纳威·隆巴顿</div>
+      <span class="char-house">赫奇帕奇 · Hufflepuff</span>
+      <div class="char-trait">坚持不懈 · Persistent</div>
+    </div>
+    <div class="character-card house-ravenclaw" onclick="selectCharacter('luna','🌙','Luna Lovegood','卢娜·洛夫古德','拉文克劳','奇思妙想')">
+      <span class="char-avatar">🌙</span>
+      <div class="char-name-en">Luna Lovegood</div>
+      <div class="char-name-zh">卢娜·洛夫古德</div>
+      <span class="char-house">拉文克劳 · Ravenclaw</span>
+      <div class="char-trait">奇思妙想 · Creative</div>
+    </div>
+    <div class="character-card house-slytherin" onclick="selectCharacter('draco','🐍','Draco Malfoy','德拉科·马尔福','斯莱特林','雄心壮志')">
+      <span class="char-avatar">🐍</span>
+      <div class="char-name-en">Draco Malfoy</div>
+      <div class="char-name-zh">德拉科·马尔福</div>
+      <span class="char-house">斯莱特林 · Slytherin</span>
+      <div class="char-trait">雄心壮志 · Ambitious</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main App Screen -->
+<div class="screen" id="screen-main">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-left">
+      <div class="player-avatar-sm" id="header-avatar" onclick="goToCharacterSelect()" title="更换角色">⚡</div>
+      <div class="player-info">
+        <div class="player-name" id="header-name">Harry Potter</div>
+        <div class="player-house" id="header-house">格兰芬多</div>
+      </div>
+    </div>
+    <div class="header-center">🏰 魔法学院 · Wizard Academy</div>
+    <div class="header-right">
+      <div class="day-badge">📅 第 <span id="day-num">1</span> 天</div>
+      <div class="points-display">
+        <span class="points-star">⭐</span>
+        <span id="total-points">0</span> 分
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="app-nav">
+    <button class="nav-btn active" onclick="showPanel('story')" id="nav-story">📖 今日故事</button>
+    <button class="nav-btn" onclick="showPanel('knowledge')" id="nav-knowledge">💡 知识点</button>
+    <button class="nav-btn" onclick="showPanel('quiz')" id="nav-quiz">🧙 魔法测验</button>
+    <button class="nav-btn" onclick="showPanel('dictation')" id="nav-dictation">✍️ 听写练习</button>
+    <button class="nav-btn" onclick="showPanel('achievements')" id="nav-achievements">🏆 成就奖杯</button>
+    <button class="nav-btn" onclick="showPanel('calendar')" id="nav-calendar">📅 学习日历</button>
+  </div>
+
+  <!-- Story Panel -->
+  <div class="panel active" id="panel-story">
+    <div class="story-date-header">
+      <div class="story-date" id="story-date-display"></div>
+      <div class="story-title" id="story-title-en"></div>
+      <div class="story-subtitle" id="story-title-zh"></div>
+      <div class="story-subject-tags" id="story-tags"></div>
+    </div>
+
+    <!-- Illustration -->
+    <div class="story-illustration">
+      <div class="story-scene" id="story-scene"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="story-controls">
+      <button class="story-btn" id="btn-read-all" onclick="toggleReadAll()">🔊 朗读全文</button>
+      <button class="story-btn" id="btn-para-read" onclick="toggleParaMode()">📍 段落模式</button>
+      <div class="speed-selector">
+        <label>语速：</label>
+        <select id="speed-select" onchange="updateSpeed()">
+          <option value="0.7">慢速</option>
+          <option value="1.0" selected>正常</option>
+          <option value="1.3">快速</option>
+        </select>
+      </div>
+      <button class="story-btn" onclick="stopSpeech()">⏹ 停止</button>
+    </div>
+
+    <!-- Story Body -->
+    <div class="story-body" id="story-body"></div>
+
+    <div class="knowledge-section">
+      <div class="section-title">📚 今日知识点 · Today's Knowledge</div>
+      <div class="knowledge-cards" id="inline-knowledge-cards"></div>
+    </div>
+  </div>
+
+  <!-- Knowledge Panel -->
+  <div class="panel" id="panel-knowledge">
+    <div class="section-title">💡 知识宝库 · Knowledge Treasury</div>
+    <div class="knowledge-cards" id="knowledge-cards-full"></div>
+  </div>
+
+  <!-- Quiz Panel -->
+  <div class="panel" id="panel-quiz">
+    <div class="quiz-container">
+      <div id="quiz-intro">
+        <div style="text-align:center;padding:40px 20px;">
+          <div style="font-size:60px;margin-bottom:16px;">🧙‍♂️</div>
+          <div class="section-title" style="justify-content:center;">魔法测验 · Magic Quiz</div>
+          <div style="font-size:14px;color:rgba(244,228,188,0.6);margin:12px 0 24px;">回答问题，赢取巫师积分！<br>Answer questions and earn wizard points!</div>
+          <button class="start-dictation-btn" onclick="startQuiz()" style="max-width:300px;margin:0 auto;">
+            🪄 开始测验 · Start Quiz
+          </button>
+        </div>
+      </div>
+      <div id="quiz-active" style="display:none;">
+        <div class="quiz-question-num" id="quiz-num">Question 1 / 5</div>
+        <div class="progress-bar"><div class="progress-fill" id="quiz-progress" style="width:20%"></div></div>
+        <div class="quiz-question">
+          <div id="quiz-q-en"></div>
+          <div class="quiz-question-zh" id="quiz-q-zh"></div>
+        </div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <button class="quiz-next-btn" id="quiz-next" onclick="nextQuestion()">下一题 · Next →</button>
+      </div>
+      <div id="quiz-done" style="display:none;text-align:center;padding:40px 20px;">
+        <div class="result-emoji" id="quiz-result-emoji">🏆</div>
+        <div class="result-score" id="quiz-result-score">5/5</div>
+        <div class="result-msg" id="quiz-result-msg"></div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+          <button class="story-btn" onclick="startQuiz()">🔄 再来一次</button>
+          <button class="story-btn" onclick="showPanel('story')">📖 返回故事</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dictation Panel -->
+  <div class="panel" id="panel-dictation">
+    <div class="section-title">✍️ 听写练习 · Spelling Practice</div>
+
+    <div class="dictation-setup" id="dictation-setup">
+      <div style="font-size:14px;color:rgba(244,228,188,0.7);margin-bottom:16px;">
+        选择练习模式 · Choose practice mode
+      </div>
+      <div class="dictation-modes">
+        <div class="mode-btn active" onclick="selectMode(this,'word')" data-mode="word">
+          <span class="mode-icon">📝</span>
+          <div class="mode-name">单词听写</div>
+          <div class="mode-desc">Word Dictation</div>
+        </div>
+        <div class="mode-btn" onclick="selectMode(this,'sentence')" data-mode="sentence">
+          <span class="mode-icon">📜</span>
+          <div class="mode-name">句子填空</div>
+          <div class="mode-desc">Fill in Blanks</div>
+        </div>
+        <div class="mode-btn" onclick="selectMode(this,'spell')" data-mode="spell">
+          <span class="mode-icon">🔤</span>
+          <div class="mode-name">拼写挑战</div>
+          <div class="mode-desc">Spelling Bee</div>
+        </div>
+      </div>
+
+      <div style="font-size:13px;color:rgba(244,228,188,0.6);margin-bottom:10px;">选择词汇 · Select words:</div>
+      <div class="word-list" id="word-list"></div>
+
+      <button class="start-dictation-btn" onclick="startDictation()">
+        🪄 开始听写 · Start Practice
+      </button>
+    </div>
+
+    <div class="dictation-active" id="dictation-active">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="dictation-score">⭐ <span id="dict-score">0</span></div>
+        <div style="font-size:12px;color:rgba(244,228,188,0.5);">
+          <span id="dict-current">1</span> / <span id="dict-total">10</span>
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="dict-progress" style="width:0%"></div></div>
+
+      <div style="font-size:13px;color:rgba(244,228,188,0.5);margin-bottom:8px;" id="dict-mode-hint"></div>
+      <div class="word-prompt" id="dict-prompt">🔊</div>
+      <div class="word-hint" id="dict-hint"></div>
+
+      <input type="text" class="dictation-input" id="dict-input"
+        placeholder="输入单词..." autocomplete="off" autocorrect="off"
+        onkeydown="handleDictKey(event)">
+
+      <div class="dictation-nav">
+        <button class="dict-btn" onclick="replayWord()">🔊 再听一次</button>
+        <button class="dict-btn" onclick="showHint()">💡 提示</button>
+        <button class="dict-btn" onclick="checkDictation()">✅ 确认</button>
+        <button class="dict-btn" onclick="skipWord()">⏭ 跳过</button>
+      </div>
+    </div>
+
+    <div class="dictation-results" id="dictation-results">
+      <div class="result-emoji" id="dict-result-emoji">🌟</div>
+      <div class="result-score" id="dict-result-score">8/10</div>
+      <div class="result-msg" id="dict-result-msg"></div>
+      <div class="result-breakdown" id="dict-breakdown"></div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
+        <button class="story-btn" onclick="resetDictation()">🔄 再来一次</button>
+        <button class="story-btn" onclick="showPanel('story')">📖 返回故事</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Panel -->
+  <div class="panel" id="panel-achievements">
+    <div class="house-cup">
+      <div class="cup-title">🏆 学院积分榜 · House Cup</div>
+      <div class="house-bars" id="house-bars"></div>
+    </div>
+
+    <div class="section-title">🎖️ 我的成就 · My Achievements</div>
+    <div class="achievements-grid" id="achievements-grid"></div>
+  </div>
+
+  <!-- Calendar Panel -->
+  <div class="panel" id="panel-calendar">
+    <div class="section-title">📅 学习日历 · Study Calendar</div>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold);" id="cal-month-title"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">日</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">一</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">二</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">三</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">四</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">五</div>
+      <div style="text-align:center;font-size:11px;color:rgba(244,228,188,0.4);">六</div>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+
+    <div class="section-title" style="margin-top:24px;">📊 学习统计 · Stats</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+      <div style="background:rgba(245,197,24,0.08);border:1px solid rgba(245,197,24,0.2);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-family:'Cinzel',serif;color:var(--gold);" id="stat-streak">0</div>
+        <div style="font-size:12px;color:rgba(244,228,188,0.6);">🔥 连续天数 Streak</div>
+      </div>
+      <div style="background:rgba(74,144,217,0.08);border:1px solid rgba(74,144,217,0.2);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-family:'Cinzel',serif;color:var(--magic-blue);" id="stat-stories">0</div>
+        <div style="font-size:12px;color:rgba(244,228,188,0.6);">📖 故事阅读 Stories</div>
+      </div>
+      <div style="background:rgba(80,200,80,0.08);border:1px solid rgba(80,200,80,0.2);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-family:'Cinzel',serif;color:#80e0a0;" id="stat-quizzes">0</div>
+        <div style="font-size:12px;color:rgba(244,228,188,0.6);">🧙 测验完成 Quizzes</div>
+      </div>
+      <div style="background:rgba(200,80,200,0.08);border:1px solid rgba(200,80,200,0.2);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:32px;font-family:'Cinzel',serif;color:#d0a0e8;" id="stat-words">0</div>
+        <div style="font-size:12px;color:rgba(244,228,188,0.6);">✍️ 单词掌握 Words</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA - Stories, Knowledge, Quizzes
+// ============================================================
+
+const STORIES = [
+  {
+    day: 1,
+    titleEn: "Harry's Magical Mathematics at Hogwarts",
+    titleZh: "哈利在霍格沃茨的魔法数学",
+    subjects: ['math','science'],
+    scene: {
+      emojis: [
+        {e:'⚡',x:'50%',y:'40%',main:true},
+        {e:'🔢',x:'20%',y:'60%'},{e:'✨',x:'80%',y:'30%'},
+        {e:'📐',x:'30%',y:'30%'},{e:'🌟',x:'70%',y:'70%'}
+      ],
+      bg: 'linear-gradient(135deg, #1a0d4a 0%, #0a1628 50%, #1a0a05 100%)'
+    },
+    paragraphs: [
+      {
+        en: "One crisp autumn morning at Hogwarts, Professor McGonagall announced a special lesson. \"Today,\" she said with a twinkle in her eye, \"we will use fractions to brew the most powerful potions!\" Harry Potter sat up straight, excited. Fractions were a type of number that showed parts of a whole — like how ½ meant one out of two equal parts.",
+        zh: "在霍格沃茨一个清爽的秋日早晨，麦格教授宣布了一堂特别课。"今天，"她眼睛闪闪发光地说，"我们要用分数来调制最强大的魔法药水！"哈利·波特坐直了身子，非常兴奋。分数是一种表示整体一部分的数——比如½表示两个相等部分中的一个。"
+      },
+      {
+        en: "Hermione leaned over and whispered, \"Harry, a fraction has two parts: the numerator on top tells us how many pieces we have, and the denominator on the bottom tells us how many equal pieces the whole is divided into.\" She drew it on parchment: **3/4** — three pieces out of four equal parts. \"So if a potion bottle holds 4 doses and we use 3, we've used three-quarters of the bottle!\"",
+        zh: '赫敏凑过来悄声说："哈利，一个分数有两个部分：上面的分子告诉我们有几份，下面的分母告诉我们整体被平均分成几份。"她在羊皮纸上写下：3/4——四个相等部分中的三份。"所以如果一瓶药水有4剂量，我们用了3剂，就用了这瓶的四分之三！"'
+      },
+      {
+        en: "Professor McGonagall waved her wand and a cauldron appeared. \"To make Felix Felicis — the luck potion — you need ½ cup of moonwater, ¼ cup of starlight essence, and ¼ cup of golden pollen. What do those fractions add up to?\" Ron scratched his head. Harry thought carefully: ½ + ¼ + ¼. He converted ½ to ²⁄₄, then added: ²⁄₄ + ¼ + ¼ = ⁴⁄₄ = 1. \"One whole cup total!\" Harry shouted triumphantly.",
+        zh: "麦格教授挥动魔杖，一口大锅出现了。"要制作菲力·菲利斯——幸运药水——你需要½杯月亮水、¼杯星光精华和¼杯黄金花粉。这些分数加起来是多少？"罗恩抓了抓头。哈利仔细思考：½ + ¼ + ¼。他把½换算成²⁄₄，然后相加：²⁄₄ + ¼ + ¼ = ⁴⁄₄ = 1。"总共一整杯！"哈利胜利地喊道。"
+      },
+      {
+        en: "Suddenly, Neville knocked over his cauldron and blue liquid spread across the floor in a perfect circle. \"Excellent!\" cried Professor Sprout, who happened to be passing by. \"A real-world example of area! The space inside a circle is called its area. We measure it in square units.\" The blue puddle reminded everyone that math was everywhere in the magical world — even in accidents!",
+        zh: "突然，纳威撞翻了他的大锅，蓝色液体在地板上形成了一个完美的圆圈。"太棒了！"路过的斯普劳特教授叫道。"这是面积的现实案例！圆圈内部的空间叫做面积，我们用平方单位来测量它。"那滩蓝色液体让所有人都记住了——数学无处不在，就连在魔法世界的意外事故中也是！"
+      }
+    ],
+    knowledge: [
+      {
+        subject: 'math', type: 'kc-math',
+        titleEn: 'Understanding Fractions',
+        titleZh: '理解分数',
+        explanation: 'A fraction represents equal parts of a whole. The top number (numerator) tells how many parts we have. The bottom number (denominator) tells how many equal parts make up the whole. Example: 3/4 means 3 out of 4 equal parts.',
+        explanationZh: '分数表示整体的相等部分。上面的数字（分子）表示我们有多少份。下面的数字（分母）表示整体被分成多少等份。例如：3/4表示4等份中的3份。',
+        magicLink: 'Like measuring potion ingredients! 就像测量药水配料！'
+      },
+      {
+        subject: 'math', type: 'kc-math',
+        titleEn: 'Adding Fractions',
+        titleZh: '分数加法',
+        explanation: 'To add fractions with different denominators, find a common denominator first. Example: 1/2 + 1/4 = 2/4 + 1/4 = 3/4. Same denominator? Just add the numerators!',
+        explanationZh: '要把分母不同的分数相加，先找到公分母。例如：1/2 + 1/4 = 2/4 + 1/4 = 3/4。分母相同？直接加分子！',
+        magicLink: 'Combining potion ingredients! 合并药水原料！'
+      },
+      {
+        subject: 'science', type: 'kc-science',
+        titleEn: 'States of Matter',
+        titleZh: '物质的状态',
+        explanation: 'Matter exists in three main states: solid (fixed shape), liquid (takes shape of container), and gas (fills all available space). Water can be ice (solid), liquid water, or steam (gas).',
+        explanationZh: '物质有三种主要状态：固体（形状固定）、液体（形状随容器变化）和气体（充满所有可用空间）。水可以是冰（固体）、液态水或蒸汽（气体）。',
+        magicLink: 'Potions change state when heated! 药水加热时会改变状态！'
+      }
+    ],
+    vocab: ['fraction', 'numerator', 'denominator', 'equivalent', 'cauldron', 'formula', 'mixture', 'ingredient'],
+    quiz: [
+      {
+        qEn: "Harry needs ½ cup of moonwater and ¼ cup of starlight. How much liquid is that in total?",
+        qZh: "哈利需要½杯月亮水和¼杯星光。总共是多少液体？",
+        options: ['¾ cup', '½ cup', '1 cup', '⅔ cup'],
+        correct: 0,
+        feedback: "Correct! ½ = ²⁄₄, so ²⁄₄ + ¼ = ¾ cup. You're a great fraction wizard! 正确！½ = ²⁄₄，所以²⁄₄ + ¼ = ¾杯。你是分数魔法师！"
+      },
+      {
+        qEn: "In a fraction, what does the DENOMINATOR (bottom number) tell us?",
+        qZh: "在分数中，分母（下面的数）告诉我们什么？",
+        options: ['How many parts we have', 'How many equal parts make the whole', 'The total amount', 'The type of fraction'],
+        correct: 1,
+        feedback: "Exactly! The denominator shows how many equal pieces the whole is divided into. 正确！分母表示整体被分成多少个相等的部分。"
+      },
+      {
+        qEn: "Neville's potion created a puddle in the shape of a circle. What do we call the space INSIDE a 2D shape?",
+        qZh: "纳威的药水形成了一个圆形水坑。我们把二维图形内部的空间叫做什么？",
+        options: ['Perimeter', 'Volume', 'Area', 'Diameter'],
+        correct: 2,
+        feedback: "Right! Area is the measurement of the space inside a 2D shape. 正确！面积是二维图形内部空间的度量。"
+      },
+      {
+        qEn: "Which state of matter takes the shape of its container?",
+        qZh: "哪种物质状态会随容器形状改变？",
+        options: ['Solid', 'Liquid', 'Gas', 'All of them'],
+        correct: 1,
+        feedback: "Correct! Liquids flow and take the shape of whatever container holds them — just like potions! 正确！液体流动并随容器形状改变——就像药水一样！"
+      },
+      {
+        qEn: "What is ²⁄₄ equal to in its simplest form?",
+        qZh: "²⁄₄化简后等于多少？",
+        options: ['⅓', '½', '¾', '⅔'],
+        correct: 1,
+        feedback: "Well done! ²⁄₄ = ½ because both numerator and denominator can be divided by 2. 做得好！²⁄₄ = ½，因为分子和分母都可以被2整除。"
+      }
+    ]
+  },
+  {
+    day: 2,
+    titleEn: "Hermione and the Water Cycle of the Forbidden Forest",
+    titleZh: "赫敏与禁忌森林的水循环",
+    subjects: ['science', 'social'],
+    scene: {
+      emojis: [
+        {e:'🌧️',x:'50%',y:'35%',main:true},
+        {e:'🌿',x:'20%',y:'65%'},{e:'☀️',x:'80%',y:'25%'},
+        {e:'💧',x:'35%',y:'55%'},{e:'☁️',x:'65%',y:'45%'}
+      ],
+      bg: 'linear-gradient(135deg, #0a1a0a 0%, #0a1628 50%, #0d0a05 100%)'
+    },
+    paragraphs: [
+      {
+        en: "Hermione Granger had always been fascinated by how nature worked. On a rainy Tuesday, she led Harry and Ron into the Forbidden Forest to observe the water cycle in action. \"The water cycle is one of nature's greatest processes,\" she explained, her wand illuminating a small stream. \"It describes how water moves continuously through our environment.\"",
+        zh: "赫敏·格兰杰一直对自然规律充满好奇。在一个下雨的星期二，她带着哈利和罗恩进入禁忌森林，亲眼观察水循环的运作。"水循环是大自然最伟大的过程之一，"她解释道，魔杖照亮了一条小溪。"它描述了水如何在我们的环境中不断循环流动。""
+      },
+      {
+        en: "\"First comes evaporation,\" Hermione said, pointing her wand at a puddle. Warm air caused the liquid water to transform into invisible water vapor that rose into the sky. \"The sun acts like a giant heating spell! It gives water molecules enough energy to escape into the atmosphere.\" Ron stared at the puddle shrinking before his eyes. \"It's like magic!\" \"It IS science,\" Hermione corrected with a smile.",
+        zh: ""首先是蒸发，"赫敏指着魔杖朝一个水坑说。温暖的空气使液态水转变成看不见的水蒸气升入天空。"太阳就像一个巨大的加热咒语！它给水分子足够的能量逃入大气层。"罗恩盯着眼前慢慢变小的水坑。"这就像魔法！""这是科学，"赫敏微笑着纠正道。"
+      },
+      {
+        en: "\"Next is condensation,\" Hermione continued. \"As water vapor rises higher into the atmosphere, it cools down. Cold air can't hold as much water vapor, so the vapor turns back into tiny liquid droplets — and those droplets cluster together to form clouds!\" Above them, grey clouds were gathering over the forest. \"And when clouds get too heavy with water droplets...\" Ron looked up nervously. \"...it rains!\" A crack of thunder confirmed it perfectly.",
+        zh: ""接下来是凝结，"赫敏继续说。"水蒸气在大气中上升时会冷却。冷空气无法容纳那么多水蒸气，所以水蒸气变回小水滴——这些小水滴聚集在一起形成云！"他们头顶上，灰色的云正在森林上空聚集。"当云中的水滴太多太重时……"罗恩紧张地抬头看。"……就会下雨！"一声雷鸣完美地印证了这一点。"
+      },
+      {
+        en: "Hermione pointed to a map she had drawn. \"Canada is divided into provinces and territories. The Forbidden Forest would be like the boreal forest that covers much of northern Canada — it plays a huge role in the water cycle by absorbing rain and releasing water vapor through leaves, a process called transpiration.\" Harry looked around with new respect for the ancient trees. Science and geography had just made the forest feel even more magical.",
+        zh: "赫敏指着她画的地图说。"加拿大被划分成省份和领地。禁忌森林就像覆盖着加拿大大部分北部地区的北方针叶林——它通过吸收雨水并通过叶片释放水蒸气在水循环中发挥着巨大的作用，这个过程叫做蒸腾作用。"哈利带着新的敬意环顾那些古老的大树。科学和地理让这片森林感觉更加神奇了。"
+      }
+    ],
+    knowledge: [
+      {
+        subject: 'science', type: 'kc-science',
+        titleEn: 'The Water Cycle',
+        titleZh: '水循环',
+        explanation: 'The water cycle has 4 main stages: Evaporation (liquid → gas, heated by sun), Condensation (gas → liquid, forms clouds), Precipitation (rain/snow falls), and Collection (water gathers in oceans, lakes, rivers).',
+        explanationZh: '水循环有四个主要阶段：蒸发（液态→气态，被太阳加热）、凝结（气态→液态，形成云）、降水（降雨/降雪）和汇集（水聚集在海洋、湖泊、河流中）。',
+        magicLink: 'Rain from clouds = precipitation! 云中降雨=降水！'
+      },
+      {
+        subject: 'social', type: 'kc-social',
+        titleEn: 'Canadian Geography',
+        titleZh: '加拿大地理',
+        explanation: 'Canada has 10 provinces and 3 territories. The boreal forest (taiga) covers 58% of Canada\'s land area. Major regions include the Great Plains, Canadian Shield, and Rocky Mountains.',
+        explanationZh: '加拿大有10个省和3个地区。北方针叶林（泰加林）覆盖了加拿大58%的土地面积。主要地区包括大平原、加拿大地盾和落基山脉。',
+        magicLink: 'Like mapping magical territories! 就像绘制魔法领土地图！'
+      },
+      {
+        subject: 'science', type: 'kc-science',
+        titleEn: 'Transpiration in Plants',
+        titleZh: '植物的蒸腾作用',
+        explanation: 'Plants absorb water through roots and release water vapor through tiny pores (stomata) in their leaves. This process is called transpiration and contributes to the local water cycle and climate.',
+        explanationZh: '植物通过根部吸收水分，通过叶片上的微小气孔（气孔）释放水蒸气。这个过程称为蒸腾作用，对当地水循环和气候有贡献。',
+        magicLink: 'Trees are nature\'s weather makers! 树木是大自然的天气制造者！'
+      }
+    ],
+    vocab: ['evaporation', 'condensation', 'precipitation', 'transpiration', 'atmosphere', 'province', 'territory', 'geography'],
+    quiz: [
+      {
+        qEn: "What happens to liquid water during EVAPORATION?",
+        qZh: "液态水在蒸发过程中会发生什么？",
+        options: ['It freezes into ice', 'It turns into water vapor (gas)', 'It becomes a cloud', 'It falls as rain'],
+        correct: 1,
+        feedback: "Correct! Evaporation is when liquid water is heated and turns into water vapor. 正确！蒸发是液态水被加热变成水蒸气的过程。"
+      },
+      {
+        qEn: "How many provinces does Canada have?",
+        qZh: "加拿大有多少个省？",
+        options: ['8', '12', '10', '13'],
+        correct: 2,
+        feedback: "Right! Canada has 10 provinces and 3 territories, for a total of 13 regions. 正确！加拿大有10个省和3个地区，共13个区域。"
+      },
+      {
+        qEn: "What is it called when water vapor cools and forms clouds?",
+        qZh: "水蒸气冷却形成云的过程叫什么？",
+        options: ['Evaporation', 'Precipitation', 'Condensation', 'Transpiration'],
+        correct: 2,
+        feedback: "Excellent! Condensation occurs when water vapor cools and turns into liquid water droplets that form clouds. 太棒了！凝结是水蒸气冷却变成液态水滴形成云的过程。"
+      },
+      {
+        qEn: "What is the process called when plants release water vapor through their leaves?",
+        qZh: "植物通过叶片释放水蒸气的过程叫什么？",
+        options: ['Evaporation', 'Transpiration', 'Respiration', 'Condensation'],
+        correct: 1,
+        feedback: "Brilliant! Transpiration is plants' contribution to the water cycle. 太聪明了！蒸腾作用是植物对水循环的贡献。"
+      },
+      {
+        qEn: "In the water cycle, what causes water to evaporate from oceans and lakes?",
+        qZh: "在水循环中，是什么导致海洋和湖泊中的水蒸发？",
+        options: ['The moon', 'Wind', 'The sun\'s heat', 'Cold air'],
+        correct: 2,
+        feedback: "Correct! The sun provides the energy needed for evaporation. 正确！太阳提供蒸发所需的能量。"
+      }
+    ]
+  },
+  {
+    day: 3,
+    titleEn: "Ron's Adventures with Time and Money at Diagon Alley",
+    titleZh: "罗恩在对角巷的时间与金钱冒险",
+    subjects: ['math', 'social'],
+    scene: {
+      emojis: [
+        {e:'🏪',x:'50%',y:'40%',main:true},
+        {e:'🪙',x:'25%',y:'60%'},{e:'⏰',x:'75%',y:'55%'},
+        {e:'📊',x:'35%',y:'30%'},{e:'🛍️',x:'65%',y:'65%'}
+      ],
+      bg: 'linear-gradient(135deg, #1a0a00 0%, #2a1a0a 40%, #0a0a1a 100%)'
+    },
+    paragraphs: [
+      {
+        en: "It was a busy Saturday at Diagon Alley, the magical shopping street. Ron Weasley had been given 20 Galleons to buy his school supplies. \"A Galleon is the wizarding currency,\" he explained to Muggle-born Hermione. \"Just like Canada uses dollars and cents, we use Galleons, Sickles, and Knuts. There are 17 Sickles in a Galleon and 29 Knuts in a Sickle!\" Managing money required real math skills.",
+        zh: "这是对角巷这条魔法购物街忙碌的周六。罗恩·韦斯莱收到了20加隆来购买学校用品。"加隆是巫师界的货币，"他向麻瓜出身的赫敏解释。"就像加拿大用美元和分，我们用加隆、西可和科纳特。1加隆等于17西可，1西可等于29科纳特！"管理钱需要真正的数学技能。"
+      },
+      {
+        en: "Ron made a budget — a plan for spending his money. His list: spellbooks cost 8 Galleons, potion ingredients 5 Galleons, and a new quill set 3 Galleons. He used addition: 8 + 5 + 3 = 16 Galleons total. \"I'll have 20 - 16 = 4 Galleons left over!\" he calculated proudly. Budgeting meant making sure you didn't spend more than you had — an important life skill in both the wizarding and Muggle worlds.",
+        zh: "罗恩制定了一个预算——花钱计划。他的清单：魔法书8加隆，魔药原料5加隆，新羽毛笔套装3加隆。他用加法计算：8 + 5 + 3 = 16加隆。"我还剩20 - 16 = 4加隆！"他骄傲地算出来。预算意味着确保花费不超过拥有的——这是巫师世界和麻瓜世界都很重要的生活技能。"
+      },
+      {
+        en: "At Madam Malkin's robe shop, Ron noticed a sign: \"Grand Sale! 25% OFF all robes.\" The robes he wanted cost 8 Galleons normally. \"How much is 25% off?\" he wondered. Hermione pulled out parchment: 25% means 25 out of 100, or ¼. So ¼ of 8 = 2 Galleons off. The sale price would be 8 - 2 = 6 Galleons. \"Percentages are just fractions in disguise,\" Hermione explained.",
+        zh: "在马尔金夫人的长袍店，罗恩看到一个牌子："盛大促销！所有长袍7.5折优惠。"他想要的长袍通常要8加隆。"7.5折是多少钱？"他纳闷道。赫敏拿出羊皮纸：25%意味着100中的25，即¼。所以¼的8 = 2加隆的折扣。特价是8 - 2 = 6加隆。"百分比只是分数的另一种形式，"赫敏解释道。"
+      },
+      {
+        en: "As afternoon turned to evening, Ron checked his pocket watch. \"We arrived at 10:30 AM and it's now 2:45 PM. How long have we been shopping?\" They counted: from 10:30 to 2:30 is 4 hours, plus 15 more minutes = 4 hours and 15 minutes! \"Time is like a number line,\" said Hermione. \"Canada even has multiple time zones — like how Toronto is 3 hours ahead of Vancouver!\" Understanding time helped them plan their whole day.",
+        zh: "下午慢慢变成傍晚，罗恩查看他的怀表。"我们上午10:30到达，现在是下午2:45。我们购物了多久？"他们计算：从10:30到2:30是4小时，再加15分钟 = 4小时15分钟！"时间就像一条数轴，"赫敏说。"加拿大甚至有多个时区——比如多伦多比温哥华早3小时！"理解时间帮助他们规划整天的行程。"
+      }
+    ],
+    knowledge: [
+      {
+        subject: 'math', type: 'kc-math',
+        titleEn: 'Percentages',
+        titleZh: '百分比',
+        explanation: 'A percentage is a fraction out of 100. "Per cent" means "per hundred." 25% = 25/100 = 1/4. To find 25% of a number, divide by 4. To find 50%, divide by 2. To find 10%, divide by 10.',
+        explanationZh: '百分比是100中的一部分。"百分"意思是"每百个中的"。25% = 25/100 = 1/4。要求一个数的25%，除以4。要求50%，除以2。要求10%，除以10。',
+        magicLink: 'Sale prices use percentages! 打折价格使用百分比！'
+      },
+      {
+        subject: 'math', type: 'kc-math',
+        titleEn: 'Elapsed Time',
+        titleZh: '经过时间',
+        explanation: 'Elapsed time is how much time has passed between a start time and end time. Count forward from the start time. Example: 10:30 AM to 2:45 PM = 4 hours 15 minutes. Break it into hours first, then minutes.',
+        explanationZh: '经过时间是开始时间和结束时间之间经过了多少时间。从开始时间往后数。例如：上午10:30到下午2:45 = 4小时15分钟。先计算小时，再计算分钟。',
+        magicLink: 'How long is Defense Against the Dark Arts? 黑魔法防御课有多长？'
+      },
+      {
+        subject: 'social', type: 'kc-social',
+        titleEn: 'Canadian Economy',
+        titleZh: '加拿大经济',
+        explanation: 'Canada uses the Canadian dollar (CAD). Canada is a market economy where businesses sell goods and services. Key industries include natural resources, manufacturing, and services. Canada trades mainly with the USA.',
+        explanationZh: '加拿大使用加元（CAD）。加拿大是一个市场经济体，企业出售商品和服务。主要行业包括自然资源、制造业和服务业。加拿大主要与美国进行贸易。',
+        magicLink: 'Like Galleons in the magical world! 就像魔法世界的加隆！'
+      }
+    ],
+    vocab: ['percentage', 'budget', 'currency', 'elapsed', 'discount', 'economy', 'territory', 'calculate'],
+    quiz: [
+      {
+        qEn: "Ron spent 8 + 5 + 3 Galleons. How much did he spend in total?",
+        qZh: "罗恩花了8 + 5 + 3加隆。他总共花了多少？",
+        options: ['14 Galleons', '16 Galleons', '18 Galleons', '15 Galleons'],
+        correct: 1,
+        feedback: "Correct! 8 + 5 + 3 = 16 Galleons. 正确！8 + 5 + 3 = 16加隆。"
+      },
+      {
+        qEn: "The robes cost 8 Galleons with 25% off. How much is the discount?",
+        qZh: "长袍原价8加隆，打25%折扣。折扣是多少？",
+        options: ['1 Galleon', '3 Galleons', '2 Galleons', '4 Galleons'],
+        correct: 2,
+        feedback: "Right! 25% of 8 = 8 ÷ 4 = 2 Galleons discount. 正确！8的25% = 8 ÷ 4 = 2加隆折扣。"
+      },
+      {
+        qEn: "They arrived at 10:30 AM and left at 2:45 PM. How long did they shop?",
+        qZh: "他们上午10:30到达，下午2:45离开。他们购物了多久？",
+        options: ['3 hours 15 min', '4 hours 15 min', '4 hours 30 min', '3 hours 45 min'],
+        correct: 1,
+        feedback: "Excellent! 10:30 to 2:30 = 4 hours, plus 15 min = 4 hours 15 minutes. 太棒了！10:30到2:30 = 4小时，加15分钟 = 4小时15分钟。"
+      },
+      {
+        qEn: "What currency does Canada use?",
+        qZh: "加拿大使用什么货币？",
+        options: ['US Dollar', 'Euro', 'Canadian Dollar', 'Pound'],
+        correct: 2,
+        feedback: "Correct! Canada uses the Canadian Dollar (CAD). 正确！加拿大使用加元（CAD）。"
+      },
+      {
+        qEn: "50% is the same as which fraction?",
+        qZh: "50%等于哪个分数？",
+        options: ['1/4', '1/3', '3/4', '1/2'],
+        correct: 3,
+        feedback: "Well done! 50% = 50/100 = 1/2. Half! 做得好！50% = 50/100 = 1/2。一半！"
+      }
+    ]
+  }
+];
+
+// Get today's story (rotate by day of year)
+function getTodayStory() {
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  return STORIES[dayOfYear % STORIES.length];
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  character: null,
+  points: 0,
+  housePoints: { gryffindor: 0, hufflepuff: 0, ravenclaw: 0, slytherin: 0 },
+  achievements: [],
+  earnedAchievements: [],
+  completedDays: [],
+  streak: 0,
+  storiesRead: 0,
+  quizzesCompleted: 0,
+  wordsMastered: 0,
+  dictationHistory: [],
+  quizHistory: []
+};
+
+const CHARACTERS = {
+  harry:    { avatar:'⚡', nameEn:'Harry Potter', nameZh:'哈利·波特', house:'gryffindor', houseZh:'格兰芬多' },
+  hermione: { avatar:'📚', nameEn:'Hermione Granger', nameZh:'赫敏·格兰杰', house:'gryffindor', houseZh:'格兰芬多' },
+  ron:      { avatar:'🎮', nameEn:'Ron Weasley', nameZh:'罗恩·韦斯莱', house:'gryffindor', houseZh:'格兰芬多' },
+  neville:  { avatar:'🌿', nameEn:'Neville Longbottom', nameZh:'纳威·隆巴顿', house:'hufflepuff', houseZh:'赫奇帕奇' },
+  luna:     { avatar:'🌙', nameEn:'Luna Lovegood', nameZh:'卢娜·洛夫古德', house:'ravenclaw', houseZh:'拉文克劳' },
+  draco:    { avatar:'🐍', nameEn:'Draco Malfoy', nameZh:'德拉科·马尔福', house:'slytherin', houseZh:'斯莱特林' }
+};
+
+const ACHIEVEMENTS_DEF = [
+  { id:'first_story', icon:'📖', name:'初读者', desc:'Read your first story', pts:50, earned:false },
+  { id:'first_quiz', icon:'🧠', name:'测验新手', desc:'Complete first quiz', pts:50, earned:false },
+  { id:'perfect_quiz', icon:'💫', name:'完美答卷', desc:'Score 100% on a quiz', pts:100, earned:false },
+  { id:'first_dictation', icon:'✍️', name:'听写见习', desc:'Complete first dictation', pts:50, earned:false },
+  { id:'streak_3', icon:'🔥', name:'三日连续', desc:'3 day learning streak', pts:150, earned:false },
+  { id:'streak_7', icon:'⚡', name:'一周连续', desc:'7 day learning streak', pts:300, earned:false },
+  { id:'points_100', icon:'⭐', name:'百点巫师', desc:'Earn 100 points', pts:0, earned:false },
+  { id:'points_500', icon:'🌟', name:'五百点法师', desc:'Earn 500 points', pts:0, earned:false },
+  { id:'words_20', icon:'📝', name:'词汇学者', desc:'Master 20 words', pts:100, earned:false },
+  { id:'quizzes_5', icon:'🏅', name:'测验达人', desc:'Complete 5 quizzes', pts:200, earned:false },
+  { id:'gryffindor', icon:'🦁', name:'格兰芬多勇士', desc:'Choose Gryffindor house', pts:30, earned:false },
+  { id:'ravenclaw', icon:'🦅', name:'拉文克劳智者', desc:'Choose Ravenclaw house', pts:30, earned:false },
+];
+
+const HOUSE_COLORS = {
+  gryffindor: '#ae1212',
+  hufflepuff: '#f0c040',
+  ravenclaw: '#4a90d9',
+  slytherin: '#1a472a'
+};
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  try { loadState(); } catch(e) { console.warn('loadState:', e); }
+  try { createStars(); } catch(e) { console.warn('createStars:', e); }
+  try { createParticles(); } catch(e) { console.warn('createParticles:', e); }
+
+  function revealApp() {
+    try {
+      document.getElementById('loading-screen').style.display = 'none';
+      if (state.character && CHARACTERS[state.character]) {
+        showMain();
+      } else {
+        state.character = null;
+        document.getElementById('screen-character').classList.add('active');
+      }
+    } catch(e) {
+      console.error('revealApp error:', e);
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('screen-character').classList.add('active');
+    }
+  }
+
+  setTimeout(revealApp, 800);
+}
+
+function loadState() {
+  const saved = localStorage.getItem('wizard-academy-state');
+  if (saved) {
+    try { state = { ...state, ...JSON.parse(saved) }; } catch(e) {}
+  }
+}
+
+function saveState() {
+  localStorage.setItem('wizard-academy-state', JSON.stringify(state));
+}
+
+function createStars() {
+  const bg = document.getElementById('stars-bg');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%; top:${Math.random()*100}%;
+      --dur:${2+Math.random()*4}s; --delay:${Math.random()*5}s;
+    `;
+    bg.appendChild(s);
+  }
+}
+
+function createParticles() {
+  const emojis = ['✨','⭐','🌟','💫','🪄','⚡','🔮'];
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      --dur:${8+Math.random()*10}s;
+      --delay:${Math.random()*10}s;
+      --size:${10+Math.random()*14}px;
+    `;
+    document.body.appendChild(p);
+  }
+}
+
+// ============================================================
+// CHARACTER SELECT
+// ============================================================
+function selectCharacter(id, avatar, nameEn, nameZh, house, trait) {
+  state.character = id;
+  const char = CHARACTERS[id];
+  state.housePoints[char.house] = (state.housePoints[char.house] || 0) + 30;
+  
+  // Check house achievement
+  if (!state.earnedAchievements?.includes(char.house)) {
+    state.earnedAchievements = state.earnedAchievements || [];
+    state.earnedAchievements.push(char.house);
+    addPoints(30, 'Joined ' + house + '!');
+  }
+
+  saveState();
+  showMain();
+}
+
+function goToCharacterSelect() {
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-character').classList.add('active');
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+function showMain() {
+  try {
+  document.getElementById('screen-character').classList.remove('active');
+  document.getElementById('screen-main').classList.add('active');
+
+  const char = CHARACTERS[state.character];
+  if (!char) { state.character = null; document.getElementById('screen-character').classList.add('active'); return; }
+  document.getElementById('header-avatar').textContent = char.avatar;
+  document.getElementById('header-name').textContent = char.nameEn;
+  document.getElementById('header-house').textContent = char.houseZh;
+  document.getElementById('total-points').textContent = state.points;
+
+  const today = new Date();
+  const dayNum = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  document.getElementById('day-num').textContent = dayNum;
+
+  loadStory();
+  buildAchievements();
+  buildCalendar();
+  buildHouseCup();
+  updateStats();
+  } catch(e) { console.error("showMain error:", e); }
+}
+
+// ============================================================
+// STORY
+// ============================================================
+const currentStory = getTodayStory();
+let speechSynth = window.speechSynthesis;
+let currentUtterance = null;
+let isReadingAll = false;
+let paraMode = false;
+let speechRate = 1.0;
+
+function loadStory() {
+  const story = currentStory;
+
+  // Date
+  const now = new Date();
+  document.getElementById('story-date-display').textContent =
+    now.toLocaleDateString('en-CA', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  document.getElementById('story-title-en').textContent = story.titleEn;
+  document.getElementById('story-title-zh').textContent = story.titleZh;
+
+  // Tags
+  const tagMap = {
+    math: {label:'数学 Math', cls:'tag-math'},
+    science: {label:'科学 Science', cls:'tag-science'},
+    social: {label:'社会 Social', cls:'tag-social'},
+    english: {label:'英语 English', cls:'tag-english'}
+  };
+  const tagsEl = document.getElementById('story-tags');
+  tagsEl.innerHTML = story.subjects.map(s =>
+    `<span class="subject-tag ${tagMap[s].cls}">${tagMap[s].label}</span>`
+  ).join('');
+
+  // Scene
+  buildScene(story.scene);
+
+  // Paragraphs
+  const body = document.getElementById('story-body');
+  body.innerHTML = story.paragraphs.map((p, i) => `
+    <div class="story-paragraph" id="para-${i}" onclick="readParagraph(${i})">
+      <div class="para-en">${p.en.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+      <div class="para-zh">${p.zh}</div>
+    </div>
+  `).join('');
+
+  // Inline knowledge cards
+  buildKnowledgeCards('inline-knowledge-cards', story.knowledge);
+  buildKnowledgeCards('knowledge-cards-full', story.knowledge);
+
+  // Word list for dictation
+  buildWordList(story.vocab);
+
+  // Quiz
+  buildQuiz(story.quiz);
+
+  // Mark as read
+  if (!state.completedDays?.includes(story.day)) {
+    state.completedDays = state.completedDays || [];
+    state.completedDays.push(story.day);
+    state.storiesRead = (state.storiesRead || 0) + 1;
+    addPoints(20, '+20 故事阅读！');
+    checkAchievement('first_story');
+    saveState();
+  }
+}
+
+function buildScene(scene) {
+  const sceneEl = document.getElementById('story-scene');
+  sceneEl.style.background = scene.bg;
+  sceneEl.innerHTML = '';
+
+  scene.emojis.forEach((e, i) => {
+    const el = document.createElement('div');
+    el.className = 'magic-particle';
+    const tx = (Math.random()-0.5)*60;
+    const ty = -(20 + Math.random()*40);
+    el.style.cssText = `
+      left:${e.x}; top:${e.y};
+      font-size:${e.main ? '56px' : '28px'};
+      --d:${3+Math.random()*3}s;
+      --dl:${Math.random()*3}s;
+      --tx:${tx}px; --ty:${ty}px;
+      filter: drop-shadow(0 0 8px rgba(245,197,24,0.6));
+    `;
+    el.textContent = e.e;
+    sceneEl.appendChild(el);
+  });
+}
+
+function buildKnowledgeCards(containerId, knowledge) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = knowledge.map(k => `
+    <div class="knowledge-card ${k.type}" onclick="speakText('${encodeURIComponent(k.titleEn + '. ' + k.explanation)}')">
+      <div class="kc-subject">${k.subject.toUpperCase()}</div>
+      <div class="kc-title">${k.titleEn}</div>
+      <div class="kc-title-zh">${k.titleZh}</div>
+      <div class="kc-explanation">${k.explanation}</div>
+      <div class="kc-explanation-zh">${k.explanationZh}</div>
+      <div style="margin-top:10px;font-size:11px;color:rgba(245,197,24,0.7);font-style:italic;">⚡ ${k.magicLink}</div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// SPEECH
+// ============================================================
+function speakText(encoded) {
+  stopSpeech();
+  const text = decodeURIComponent(encoded);
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.rate = speechRate;
+  currentUtterance.lang = 'en-US';
+  speechSynth.speak(currentUtterance);
+}
+
+function readParagraph(i) {
+  stopSpeech();
+  document.querySelectorAll('.story-paragraph').forEach(p => p.classList.remove('reading', 'highlighted'));
+  const paraEl = document.getElementById('para-' + i);
+  paraEl.classList.add('reading');
+
+  const text = currentStory.paragraphs[i].en;
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.rate = speechRate;
+  currentUtterance.lang = 'en-US';
+  currentUtterance.onend = () => {
+    paraEl.classList.remove('reading');
+    paraEl.classList.add('highlighted');
+    if (paraMode) {
+      const next = i + 1;
+      if (next < currentStory.paragraphs.length) {
+        setTimeout(() => readParagraph(next), 500);
+      }
+    }
+  };
+  speechSynth.speak(currentUtterance);
+}
+
+function toggleReadAll() {
+  if (isReadingAll) {
+    stopSpeech();
+    isReadingAll = false;
+    document.getElementById('btn-read-all').classList.remove('playing');
+    document.getElementById('btn-read-all').textContent = '🔊 朗读全文';
+  } else {
+    isReadingAll = true;
+    paraMode = false;
+    document.getElementById('btn-read-all').classList.add('playing');
+    document.getElementById('btn-read-all').innerHTML = '⏸ 暂停朗读';
+    readAllParas(0);
+  }
+}
+
+function readAllParas(i) {
+  if (!isReadingAll || i >= currentStory.paragraphs.length) {
+    isReadingAll = false;
+    document.getElementById('btn-read-all').classList.remove('playing');
+    document.getElementById('btn-read-all').textContent = '🔊 朗读全文';
+    return;
+  }
+  document.querySelectorAll('.story-paragraph').forEach(p => p.classList.remove('reading'));
+  document.getElementById('para-' + i).classList.add('reading');
+  currentUtterance = new SpeechSynthesisUtterance(currentStory.paragraphs[i].en);
+  currentUtterance.rate = speechRate;
+  currentUtterance.lang = 'en-US';
+  currentUtterance.onend = () => {
+    document.getElementById('para-' + i)?.classList.remove('reading');
+    if (isReadingAll) readAllParas(i + 1);
+  };
+  speechSynth.speak(currentUtterance);
+}
+
+function toggleParaMode() {
+  paraMode = !paraMode;
+  const btn = document.getElementById('btn-para-read');
+  btn.classList.toggle('active', paraMode);
+  btn.textContent = paraMode ? '📍 段落模式 ON' : '📍 段落模式';
+}
+
+function stopSpeech() {
+  speechSynth.cancel();
+  isReadingAll = false;
+  document.querySelectorAll('.story-paragraph').forEach(p => p.classList.remove('reading'));
+  document.getElementById('btn-read-all').classList.remove('playing');
+  document.getElementById('btn-read-all').textContent = '🔊 朗读全文';
+}
+
+function updateSpeed() {
+  speechRate = parseFloat(document.getElementById('speed-select').value);
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+let quizState = { questions:[], current:0, score:0, answers:[] };
+
+function buildQuiz(questions) {
+  quizState.questions = questions;
+}
+
+function startQuiz() {
+  quizState.current = 0;
+  quizState.score = 0;
+  quizState.answers = [];
+  document.getElementById('quiz-intro').style.display = 'none';
+  document.getElementById('quiz-done').style.display = 'none';
+  document.getElementById('quiz-active').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = quizState.questions[quizState.current];
+  const total = quizState.questions.length;
+  const cur = quizState.current + 1;
+
+  document.getElementById('quiz-num').textContent = `Question ${cur} / ${total} · 第${cur}题`;
+  document.getElementById('quiz-progress').style.width = (cur/total*100) + '%';
+  document.getElementById('quiz-q-en').textContent = q.qEn;
+  document.getElementById('quiz-q-zh').textContent = q.qZh;
+
+  const opts = document.getElementById('quiz-options');
+  const letters = ['A','B','C','D'];
+  opts.innerHTML = q.options.map((o,i) => `
+    <button class="quiz-option" onclick="selectOption(${i})">
+      <span class="option-letter">${letters[i]}</span>
+      ${o}
+    </button>
+  `).join('');
+
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').className = 'quiz-next-btn';
+}
+
+function selectOption(idx) {
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.classList.add('disabled'));
+
+  const isCorrect = idx === q.correct;
+  opts[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) opts[q.correct].classList.add('correct');
+
+  const feedback = document.getElementById('quiz-feedback');
+  feedback.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  feedback.innerHTML = (isCorrect ? '✅ ' : '❌ ') + q.feedback;
+
+  if (isCorrect) {
+    quizState.score++;
+    addPoints(10, '+10 ⭐ 答对了！');
+  }
+
+  quizState.answers.push({ correct: isCorrect, chosen: idx });
+  document.getElementById('quiz-next').className = 'quiz-next-btn show';
+
+  const nextBtn = document.getElementById('quiz-next');
+  nextBtn.textContent = quizState.current < quizState.questions.length - 1
+    ? '下一题 · Next →'
+    : '查看结果 · Results 🏆';
+}
+
+function nextQuestion() {
+  quizState.current++;
+  if (quizState.current >= quizState.questions.length) {
+    showQuizResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showQuizResults() {
+  document.getElementById('quiz-active').style.display = 'none';
+  document.getElementById('quiz-done').style.display = 'block';
+
+  const score = quizState.score;
+  const total = quizState.questions.length;
+  const pct = Math.round(score/total*100);
+
+  const emojis = ['😢','😔','😊','🌟','🏆'];
+  const ei = score === 0 ? 0 : score <= 1 ? 1 : score <= 3 ? 2 : score < total ? 3 : 4;
+  document.getElementById('quiz-result-emoji').textContent = emojis[ei];
+  document.getElementById('quiz-result-score').textContent = `${score}/${total}`;
+
+  const msgs = [
+    '再试一次，你能做到的！Try again, you can do it!',
+    '继续加油，越来越好！Keep going, getting better!',
+    '做得不错！Good job!',
+    '太厉害了！Almost perfect!',
+    '完美！满分巫师！Perfect! Full marks wizard!'
+  ];
+  document.getElementById('quiz-result-msg').textContent = msgs[ei];
+
+  state.quizzesCompleted = (state.quizzesCompleted || 0) + 1;
+  addPoints(pct === 100 ? 30 : 15, `测验完成 +${pct === 100 ? 30 : 15}分`);
+  if (pct === 100) checkAchievement('perfect_quiz');
+  checkAchievement('first_quiz');
+  if (state.quizzesCompleted >= 5) checkAchievement('quizzes_5');
+  saveState();
+  updateStats();
+}
+
+// ============================================================
+// DICTATION
+// ============================================================
+let dictMode = 'word';
+let dictWords = [];
+let dictCurrent = 0;
+let dictScore = 0;
+let dictTotal = 0;
+let dictResults = [];
+let selectedWords = [];
+
+function buildWordList(vocab) {
+  selectedWords = [...vocab];
+  const wl = document.getElementById('word-list');
+  wl.innerHTML = vocab.map(w => `
+    <div class="word-chip selected" onclick="toggleWord(this,'${w}')" data-word="${w}">${w}</div>
+  `).join('');
+}
+
+function toggleWord(el, word) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!selectedWords.includes(word)) selectedWords.push(word);
+  } else {
+    selectedWords = selectedWords.filter(w => w !== word);
+  }
+}
+
+function selectMode(el, mode) {
+  dictMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function startDictation() {
+  if (selectedWords.length === 0) { alert('请至少选择一个单词！'); return; }
+
+  dictWords = [...selectedWords].sort(() => Math.random() - 0.5);
+  dictCurrent = 0;
+  dictScore = 0;
+  dictTotal = dictWords.length;
+  dictResults = [];
+
+  document.getElementById('dictation-setup').style.display = 'none';
+  document.getElementById('dictation-active').classList.add('show');
+  document.getElementById('dictation-results').classList.remove('show');
+  document.getElementById('dict-total').textContent = dictTotal;
+
+  const hintMap = { word:'听音写词', sentence:'句子填空', spell:'拼写挑战' };
+  document.getElementById('dict-mode-hint').textContent = `${hintMap[dictMode]} · 按回车确认`;
+
+  showDictWord();
+}
+
+function showDictWord() {
+  if (dictCurrent >= dictTotal) { showDictResults(); return; }
+
+  const word = dictWords[dictCurrent];
+  document.getElementById('dict-current').textContent = dictCurrent + 1;
+  document.getElementById('dict-progress').style.width = (dictCurrent/dictTotal*100) + '%';
+  document.getElementById('dict-input').value = '';
+  document.getElementById('dict-input').className = 'dictation-input';
+  document.getElementById('dict-input').focus();
+
+  if (dictMode === 'spell') {
+    document.getElementById('dict-prompt').textContent = '🔤 ' + '_ '.repeat(word.length);
+    document.getElementById('dict-hint').textContent = `${word.length} letters · ${word.length}个字母`;
+  } else {
+    document.getElementById('dict-prompt').textContent = '🔊';
+    document.getElementById('dict-hint').textContent = `Listen carefully · 仔细听`;
+  }
+
+  setTimeout(() => speakWordAudio(word), 300);
+}
+
+function speakWordAudio(word) {
+  stopSpeech();
+  const utt = new SpeechSynthesisUtterance(word);
+  utt.rate = 0.8;
+  utt.lang = 'en-US';
+  speechSynth.speak(utt);
+}
+
+function replayWord() {
+  speakWordAudio(dictWords[dictCurrent]);
+}
+
+function showHint() {
+  const word = dictWords[dictCurrent];
+  const hint = word[0] + word.slice(1).replace(/[a-z]/gi, '_');
+  document.getElementById('dict-hint').textContent = `提示: ${hint}`;
+}
+
+function handleDictKey(e) {
+  if (e.key === 'Enter') checkDictation();
+}
+
+function checkDictation() {
+  const word = dictWords[dictCurrent];
+  const input = document.getElementById('dict-input').value.trim().toLowerCase();
+  const correct = input === word.toLowerCase();
+
+  const inputEl = document.getElementById('dict-input');
+  inputEl.classList.add(correct ? 'correct' : 'wrong');
+
+  dictResults.push({ word, input, correct });
+
+  if (correct) {
+    dictScore++;
+    document.getElementById('dict-score').textContent = dictScore;
+    addPoints(5, '+5 ⭐ 拼写正确！');
+  }
+
+  setTimeout(() => {
+    if (!correct) {
+      // Show correct word briefly
+      inputEl.value = word;
+      setTimeout(() => {
+        dictCurrent++;
+        showDictWord();
+      }, 1000);
+    } else {
+      dictCurrent++;
+      showDictWord();
+    }
+  }, 600);
+}
+
+function skipWord() {
+  const word = dictWords[dictCurrent];
+  dictResults.push({ word, input: '(跳过)', correct: false });
+  dictCurrent++;
+  showDictWord();
+}
+
+function showDictResults() {
+  document.getElementById('dictation-active').classList.remove('show');
+  document.getElementById('dictation-results').classList.add('show');
+  document.getElementById('dict-progress').style.width = '100%';
+
+  const pct = Math.round(dictScore/dictTotal*100);
+  const emojis = pct === 100 ? '🌟' : pct >= 80 ? '😎' : pct >= 60 ? '😊' : '📚';
+  document.getElementById('dict-result-emoji').textContent = emojis;
+  document.getElementById('dict-result-score').textContent = `${dictScore}/${dictTotal}`;
+
+  const msgs = [
+    '加油，多练习就能掌握！Keep practicing!',
+    '不错，继续努力！Good effort!',
+    '很好，越来越棒！Very good!',
+    '出色！词汇高手！Excellent speller!'
+  ];
+  const mi = pct < 50 ? 0 : pct < 70 ? 1 : pct < 90 ? 2 : 3;
+  document.getElementById('dict-result-msg').textContent = msgs[mi];
+
+  const breakdown = document.getElementById('dict-breakdown');
+  breakdown.innerHTML = dictResults.map(r => `
+    <div class="result-item">
+      <span class="word">${r.word}</span>
+      <span class="answer">${r.input}</span>
+      <span class="status">${r.correct ? '✅' : '❌'}</span>
+    </div>
+  `).join('');
+
+  state.wordsMastered = (state.wordsMastered || 0) + dictScore;
+  checkAchievement('first_dictation');
+  if (state.wordsMastered >= 20) checkAchievement('words_20');
+  saveState();
+  updateStats();
+}
+
+function resetDictation() {
+  document.getElementById('dictation-setup').style.display = 'block';
+  document.getElementById('dictation-active').classList.remove('show');
+  document.getElementById('dictation-results').classList.remove('show');
+}
+
+// ============================================================
+// ACHIEVEMENTS
+// ============================================================
+function buildAchievements() {
+  const grid = document.getElementById('achievements-grid');
+  grid.innerHTML = ACHIEVEMENTS_DEF.map(a => {
+    const earned = state.earnedAchievements?.includes(a.id);
+    return `
+      <div class="achievement-card ${earned ? 'earned' : 'locked'}">
+        <div class="achievement-badge">${earned ? '✨' : '🔒'}</div>
+        <span class="achievement-icon">${a.icon}</span>
+        <div class="achievement-name">${a.name}</div>
+        <div class="achievement-desc">${a.desc}</div>
+        ${a.pts > 0 ? `<div class="achievement-pts">+${a.pts} pts</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function checkAchievement(id) {
+  state.earnedAchievements = state.earnedAchievements || [];
+  if (state.earnedAchievements.includes(id)) return;
+
+  const def = ACHIEVEMENTS_DEF.find(a => a.id === id);
+  if (!def) return;
+
+  state.earnedAchievements.push(id);
+  if (def.pts > 0) addPoints(def.pts, `🏅 成就解锁：${def.name} +${def.pts}`);
+
+  // Show notification
+  showNotification(`🏅 成就解锁！${def.icon} ${def.name}`);
+  buildAchievements();
+  saveState();
+}
+
+function showNotification(msg) {
+  const n = document.createElement('div');
+  n.style.cssText = `
+    position:fixed; top:80px; right:20px; z-index:9999;
+    background:linear-gradient(135deg,rgba(26,13,74,0.98),rgba(10,10,26,0.98));
+    border:1px solid rgba(245,197,24,0.5);
+    border-radius:12px; padding:12px 20px;
+    font-family:'Cinzel',serif; font-size:13px; color:var(--gold);
+    box-shadow:0 8px 30px rgba(245,197,24,0.3);
+    animation:slideIn 0.5s ease, slideOut 0.5s ease 3s forwards;
+    max-width:300px;
+  `;
+  n.textContent = msg;
+  document.body.appendChild(n);
+
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn { from { opacity:0; transform:translateX(100%); } to { opacity:1; transform:translateX(0); } }
+    @keyframes slideOut { from { opacity:1; } to { opacity:0; transform:translateX(100%); } }
+  `;
+  document.head.appendChild(style);
+  setTimeout(() => n.remove(), 3600);
+}
+
+// ============================================================
+// HOUSE CUP
+// ============================================================
+function buildHouseCup() {
+  const houses = [
+    { id:'gryffindor', name:'格兰芬多 Gryffindor', icon:'🦁' },
+    { id:'hufflepuff', name:'赫奇帕奇 Hufflepuff', icon:'🦡' },
+    { id:'ravenclaw', name:'拉文克劳 Ravenclaw', icon:'🦅' },
+    { id:'slytherin', name:'斯莱特林 Slytherin', icon:'🐍' },
+  ];
+
+  const char = CHARACTERS[state.character];
+  // Add current user's points to their house
+  state.housePoints = state.housePoints || {};
+  state.housePoints[char.house] = state.points;
+
+  const max = Math.max(...houses.map(h => state.housePoints[h.id] || 0), 1);
+
+  const barsEl = document.getElementById('house-bars');
+  barsEl.innerHTML = houses.map(h => {
+    const pts = state.housePoints[h.id] || 0;
+    const pct = Math.round(pts/max*100);
+    return `
+      <div class="house-bar">
+        <div class="house-bar-label" style="display:flex;align-items:center;gap:6px">
+          ${h.icon} <span style="font-size:12px;">${h.name}</span>
+        </div>
+        <div class="house-bar-track">
+          <div class="house-bar-fill" style="width:${pct}%;background:${HOUSE_COLORS[h.id]}"></div>
+        </div>
+        <div class="house-bar-pts">${pts}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function buildCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  document.getElementById('cal-month-title').textContent =
+    now.toLocaleDateString('zh-CN', { year:'numeric', month:'long' }) +
+    ' · ' + now.toLocaleDateString('en-CA', { month:'long', year:'numeric' });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < firstDay; i++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day empty';
+    grid.appendChild(d);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+
+    const dayOfYear = Math.floor((new Date(year, month, d) - new Date(year, 0, 0)) / 86400000);
+    if (state.completedDays?.includes(dayOfYear % STORIES.length + 1)) {
+      el.classList.add('completed');
+      el.textContent = '⭐';
+    }
+    if (d === now.getDate()) el.classList.add('today');
+    grid.appendChild(el);
+  }
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function updateStats() {
+  document.getElementById('stat-streak').textContent = state.streak || 0;
+  document.getElementById('stat-stories').textContent = state.storiesRead || 0;
+  document.getElementById('stat-quizzes').textContent = state.quizzesCompleted || 0;
+  document.getElementById('stat-words').textContent = state.wordsMastered || 0;
+}
+
+// ============================================================
+// POINTS
+// ============================================================
+function addPoints(amount, label) {
+  state.points += amount;
+  document.getElementById('total-points').textContent = state.points;
+
+  // Animate
+  const pop = document.createElement('div');
+  pop.className = 'points-pop';
+  pop.textContent = '+' + amount + ' ⭐';
+  pop.style.cssText = `left:${window.innerWidth/2-30}px;top:${window.innerHeight/2}px;`;
+  document.body.appendChild(pop);
+  setTimeout(() => pop.remove(), 1600);
+
+  // Check point achievements
+  if (state.points >= 100) checkAchievement('points_100');
+  if (state.points >= 500) checkAchievement('points_500');
+
+  // Update house
+  const char = CHARACTERS[state.character];
+  if (char) {
+    state.housePoints = state.housePoints || {};
+    state.housePoints[char.house] = state.points;
+    buildHouseCup();
+  }
+  saveState();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  stopSpeech();
+
+  if (name === 'achievements') { buildAchievements(); buildHouseCup(); }
+  if (name === 'calendar') { buildCalendar(); updateStats(); }
+}
+
+// ============================================================
+// START
+// ============================================================
+window.addEventListener('load', function() {
+  try {
+    init();
+  } catch(e) {
+    console.error('Init failed:', e);
+    // Emergency fallback: hide loading, show character select
+    var ls = document.getElementById('loading-screen');
+    if (ls) ls.style.display = 'none';
+    var cs = document.getElementById('screen-character');
+    if (cs) cs.classList.add('active');
+  }
+});
+
+// Extra safety: if still loading after 3s, force show character select
+setTimeout(function() {
+  var ls = document.getElementById('loading-screen');
+  if (ls && ls.style.display !== 'none') {
+    ls.style.display = 'none';
+    var cs = document.getElementById('screen-character');
+    if (cs && !document.getElementById('screen-main').classList.contains('active')) {
+      cs.classList.add('active');
+    }
+  }
+}, 3000);
+</script>
+</body>
+</html>
